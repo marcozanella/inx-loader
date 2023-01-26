@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div>
+        <p class="display-6">INX Europe data loader</p>
+    </div>
+    {% if request.method == 'POST' %}
+    <p>POST</p>
+    {% endif %}
+    {% if request.method == 'GET' %}
+    <p>GET</p>
+    {% endif %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-danger" role="alert">        
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+            </div>
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <form method="post" enctype="multipart/form-data">
+        <div class="p-2">
+            <label for="ke30" class="form-label">KE30</label>
+            <input type="file" class="form-control" name="form_ke30">
+        </div>
+        <div class="p-2">
+            <label for="ke24" class="form-label">KE24</label>
+            <input type="file" class ="form-control" name="form_ke24">
+        </div>
+        <div class="pt-3 pb-3 ms-2">
+            <input type="submit" class ="btn btn-primary" value="Upload">
+        </div>
+        
+    </form>
+{% endblock %}
+
+
+
+
+
+  

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content%}
+
+    <!--
+    {% if request.method == 'POST' %}
+    <p>POST</p>
+    {% endif %}
+    {% if request.method == 'GET' %}
+    <p>GET</p>
+    {% endif %}  -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-danger" role="alert">        
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+            </div>
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <form method="post" enctype="multipart/form-data">
+        <div class="p-2">
+            <label for="ke30" class="form-label">KE30</label>
+            <input type="file" class="form-control" placeholder="select k30 file" name="form_ke30">
+        </div>
+        <div class="p-2">
+            <label for="ke24" class="form-label">KE24</label>
+            <input type="file" class ="form-control" name="form_ke24">
+        </div>
+        <div class="p-2">
+            <label for="zaq" class="form-label">ZAQCODMI9</label>
+            <input type="file" class ="form-control" name="form_zaq">
+        </div>
+        <div class="p-2">
+            <label for="oo" class="form-label">Open Orders</label>
+            <input type="file" class ="form-control" name="form_oo">
+        </div>
+        <div class="p-2">
+            <label for="oh" class="form-label">Open History</label>
+            <input type="file" class ="form-control" name="form_oh">
+        </div>
+        <div class="p-2">
+            <label for="oit" class="form-label">Open Items</label>
+            <input type="file" class ="form-control" name="form_oit">
+        </div>
+        <div class="p-2">
+            <label for="arr" class="form-label">Arrears</label>
+            <input type="file" class ="form-control" name="form_arr">
+        </div>
+        <div class="p-2">
+            <label for="prl" class="form-label">Price List</label>
+            <input type="file" class ="form-control" name="form_prl">
+        </div>
+        <div class="pt-3 pb-3 ms-2">
+            <input type="submit" class ="btn btn-primary" value="Upload">
+        </div>
+    </form>
+{% endblock %}
+    
+
+
+
+  

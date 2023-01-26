@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <div>
+        {% for file in request.files.values() %}
+        <p>{{ file.filename }}</p>
+        {% endfor %}
+        <!-- <p>{{request.files.values()['form_ke24']}}</p> -->
+        <a class="btn btn-primary" href="/" role="button">Back</a>
+    </div>
+    <div id="log" class="bg-grey-400">Log:</div>
+</div>
+<!-- I include the following line to import the javascript functions that receive from the wesocket server-->
+<script src="{{url_for('static', filename='inx.js')}}"></script>
+{% endblock %}
