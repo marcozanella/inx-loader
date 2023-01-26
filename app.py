@@ -7,7 +7,7 @@ from configparser import ConfigParser
 import inx.functions
 
 app = Flask(__name__)
-sock = Sock(app)
+socket = Sock(app)
 
 app.secret_key = 'whEtr8uQoB'
 app.config['ALLOWED_EXTENSIONS'] = ['xlsx', 'XLSX']
@@ -15,13 +15,15 @@ app.config['UPLOAD_FOLDER_INXEU'] = './uploads/inxeu'
 app.config['UPLOAD_FOLDER_INXD'] = './uploads/inxd'
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1000 * 1000
 
-@sock.route('/echo')
-def echo(sock):
-    while True:
-        data = str(random.random())
-        sock.send(inx.functions.connect_db())
-        # print(data)
-        sleep(3)
+@socket.route('/echo')
+def echo(websocket):
+    inx.functions.connect_db(websocket)
+    # while True:
+    #     data = str(random.random())
+    #     websocket.send(inx.functions.connect_db())
+    #     inx.functions.use_the_socket(websocket)
+    #     # print(data)
+    #     sleep(3)
 
 @app.route('/inxeu', methods=['POST', 'GET'])
 def inxeu():

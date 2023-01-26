@@ -1,12 +1,12 @@
 const log = (text) => {
-    document.getElementById('log').innerHTML += `<p class="">${text}</p>`;
+    document.getElementById('log').innerHTML += `<p class="font-monospace text-trucate mx-0 my-0 small"><small>${text}</small></p>`;
     
     console.log(text);
   };
 
 const socket = new WebSocket('ws://' + location.host + '/echo');
   socket.addEventListener('message', ev => {
-    log('<<<--- received from server ' + ev.data);
+    log('- ' + ev.data);
   });
 
   // document.getElementById('form').onsubmit = ev => {
