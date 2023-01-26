@@ -25,6 +25,10 @@ def echo(websocket):
     #     # print(data)
     #     sleep(3)
 
+@app.route("/")
+def home():
+    return render_template("home.html")
+
 @app.route('/inxeu', methods=['POST', 'GET'])
 def inxeu():
     clear_folders(app.config['UPLOAD_FOLDER_INXEU'])
@@ -47,7 +51,7 @@ def inxeu():
     elif request.method == 'GET':
         return render_template('inxeu.html', request=request)
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/inxd', methods=['POST', 'GET'])
 def digital():
     clear_folders(app.config['UPLOAD_FOLDER_INXD'])
     if request.method == 'POST':
