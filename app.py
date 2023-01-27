@@ -17,7 +17,7 @@ app.config['MAX_CONTENT_LENGTH'] = 50 * 1000 * 1000
 
 @socket.route('/echo')
 def echo(websocket):
-    inx.functions.connect_db(websocket)
+    inx.functions.connect_db(websocket, "")
     # while True:
     #     data = str(random.random())
     #     websocket.send(inx.functions.connect_db())
