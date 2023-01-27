@@ -12,6 +12,7 @@
         {% endif %}
     {% endwith %}
     <div>
+        {{ session["db"] }}
         {% for file in request.files.values() %}
         <p>{{ file.filename }}</p>
         {% endfor %}

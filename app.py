@@ -1,4 +1,4 @@
-from flask import Flask, flash, request, redirect, render_template, url_for
+from flask import Flask, flash, request, redirect, render_template, render_template_string, url_for, session
 from flask_sock import Sock
 from werkzeug.utils import secure_filename
 from time import sleep
@@ -17,16 +17,21 @@ app.config['MAX_CONTENT_LENGTH'] = 50 * 1000 * 1000
 
 @socket.route('/echo')
 def echo(websocket):
-    inx.functions.connect_db(websocket, "")
-    # while True:
-    #     data = str(random.random())
-    #     websocket.send(inx.functions.connect_db())
-    #     inx.functions.use_the_socket(websocket)
-    #     # print(data)
-    #     sleep(3)
+    print( "session[\"db\"] ", session["db"])
+    result = inx.functions.connect_db(websocket, session["db"])
+    if result != False:
+        conx = result[1] #From the tuple returned by the connection function
+        #Here we need to work on the files
+
+        #Fare un elenco dei file che ci sono nella cartella uploads - tuple?
+        # tipo nomefile
+        #lavorare i files
+
+        
 
 @app.route("/")
 def home():
+    # Set ConfigParser and read ini file
     return render_template("home.html")
 
 @app.route('/inxeu', methods=['POST', 'GET'])
@@ -52,7 +57,11 @@ def inxeu():
         return render_template('inxeu.html', request=request)
 
 @app.route('/inxd', methods=['POST', 'GET'])
-def digital():
+def inxd():
+    # Getting the endpoint name
+    # endpoint = request.url_rule.endpoint
+    session["db"] = request.url_rule.endpoint
+    print ( session["db"] )
     clear_folders(app.config['UPLOAD_FOLDER_INXD'])
     if request.method == 'POST':
         if 'form_ke30' in request.files and 'form_ke24' in request.files:

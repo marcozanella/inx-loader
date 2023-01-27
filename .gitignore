@@ -1,5 +1,5 @@
 .DS_Store
-sample_files
+sample_files/
 sql_pbi_venv
 .vscode
-__pycache__
+__pycache__/

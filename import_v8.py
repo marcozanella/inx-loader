@@ -549,7 +549,7 @@ pwd = 'NX{Pbv2AF;'
 driver_version = str(args.sql)
 
 if args.inxeu:
-    database_name = 'INX EU'
+    database = 'INX EU'
     server = 'inxeu.database.windows.net'
     database = 'inxeu_db'
     uid = 'inxeu_admin'
@@ -558,7 +558,8 @@ if args.inxeu:
 conn_string = 'DRIVER={ODBC Driver ' + driver_version + ' for SQL Server};SERVER=' + server + ';DATABASE=' + database + ';UID=' + uid + ';PWD=' + pwd + ';Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
 
 print(separator)
-print('Operation wil be performed on database: ', database_name)
+print(conn_string)
+print('Operation wil be performed on database: ', database)
 confirmation = input('Do you confirm? (Y to confirm, any other key to cancel) ')
 print('\n' + separator)
 if confirmation != 'Y':
