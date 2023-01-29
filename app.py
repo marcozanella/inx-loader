@@ -21,8 +21,9 @@ def echo(websocket):
         # Here we need to work on the files
 
         # Fare un elenco dei file che ci sono nella cartella uploads - tuple?
-        files = glob.glob(config_dict["upload_folder"])
-        print ("stop qui")
+        files = glob.glob(config_dict["upload_folder"] + "/*")
+        websocket.send(conx)
+        websocket.send(files)
         # tipo nomefile
         # lavorare i files
 
@@ -75,7 +76,7 @@ def inxd():
         if the_ke30_fileobject.filename == '' and the_ke24_fileobject.filename == '' and the_zaq_fileobject.filename == '' and the_oo_fileobject.filename == '' and the_oh_fileobject.filename == '' and the_oit_fileoject.filename == '' and the_arr_fileoject.filename == '' and the_prl_fileoject.filename == '':
             flash('No selected file')
             return redirect(request.url)
-        location = app.config['UPLOAD_FOLDER_INXD']
+        location = config_dict["upload_folder"]
         check_filename_and_saves_on_server(the_ke30_fileobject, location, 'ke30')
         check_filename_and_saves_on_server(the_ke24_fileobject, location, 'ke24')
         check_filename_and_saves_on_server(the_zaq_fileobject, location, 'zaq')
@@ -107,11 +108,7 @@ def settings():
     return render_template("settings.html")
 
 def allowed_file(filename):
-    config_file = ConfigParser()
-    config_file.read("config.ini")
-    allowed_extensions = config_file["FILES"]["allowed_extensions"]
-
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in config_dict["allowed_extensions"]
 
 def securify_filename(filename):
     return secure_filename(filename)
@@ -141,7 +138,8 @@ def get_config(company):
     global config_dict
     config_dict = {
         "sql_driver_ver": config["DEFAULT"]["sql_driver_ver"],
-        "max_content_length": config["DEFAULT"]["max_content_length"]
+        "max_content_length": config["DEFAULT"]["max_content_length"],
+        "allowed_extensions": config["DEFAULT"]["allowed_extensions"]
     }
     if company == "inxd":
         config_dict["db_server"] = config["INXD_SERVER_CONFIG"]["inxd_db_host"]
