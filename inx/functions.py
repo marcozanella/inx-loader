@@ -1,34 +1,9 @@
 from configparser import ConfigParser
 import pyodbc, random
+import glob
 
-def connect_db_inxd():
-    config = ConfigParser()
-    config.read("config.ini")
-    sql_drv_ver = config["DEFAULT"]["sql_driver_ver"]
-    db_server = config["INXD_SERVER_CONFIG"]["inxd_db_host"]
-    db_name = config["INXD_SERVER_CONFIG"]["inxd_db_name"]
-    db_user = config["INXD_SERVER_CONFIG"]["inxd_db_username"]
-    db_password = config["INXD_SERVER_CONFIG"]["inxd_db_password"]
-    conn_string = "DRIVER={ODBC Driver " + str(sql_drv_ver) + " for SQL Server};SERVER=" + str(db_server) + ";DATABASE=" + db_name + ";UID=" + db_user + ";PWD=" + db_password + ";Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
-    return conn_string
-
-def connect_db_inxeu():
-    config = ConfigParser()
-    config.read("config.ini")
-    sql_drv_ver = config["DEFAULT"]["sql_driver_ver"]
-    db_server = config["INXD_SERVER_CONFIG"]["inxeu_db_host"]
-    db_name = config["INXD_SERVER_CONFIG"]["inxeu_db_name"]
-    db_user = config["INXD_SERVER_CONFIG"]["inxeu_db_username"]
-    db_password = config["INXD_SERVER_CONFIG"]["inxeu_db_password"]
-    conn_string = "DRIVER={ODBC Driver " + str(sql_drv_ver) + " for SQL Server};SERVER=" + db_server + ";DATABASE=" + db_name + ";UID=" + db_user + ";PWD=" + db_password + ";Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
-    return conn_string
-
-def connect_db(the_socket, db):
-    if db == "inxd":
-        conn_string = connect_db_inxd()
-    else:
-        conn_string = connect_db_inxeu()
-
+def connect_db(the_socket, conn_string):
+    
     the_socket.send("Connection String:")
     the_socket.send(conn_string)
     try:
@@ -38,7 +13,7 @@ def connect_db(the_socket, db):
         # HURRAY!
         return (True, conx)
     except pyodbc.ConnectionError as ex:
-        the_socket.send("connection Error")
+        the_socket.send("Connection Error")
         return False
     except pyodbc.OperationalError as err:
         the_socket.send("DB connection could not be established")
@@ -51,5 +26,18 @@ def connect_db(the_socket, db):
         the_socket.send(ex)
         return False
 
-def use_the_socket(ws):
-    ws.send(random.random())
+
+def prep_file():
+    files_dict = {
+        "ke30": "",
+        "ke24": "",
+        "zaq": "",
+        "oo": "",
+        "oh": "",
+        "oit": "",
+        "arr": "",
+        "prl": "",
+    }
+    files = glob.glob('./upload/inxd/*.*')
+    pass
+

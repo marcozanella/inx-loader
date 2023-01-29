@@ -2,33 +2,31 @@ from flask import Flask, flash, request, redirect, render_template, render_templ
 from flask_sock import Sock
 from werkzeug.utils import secure_filename
 from time import sleep
-import os, random
+import os, glob
 from configparser import ConfigParser
 import inx.functions
 
 app = Flask(__name__)
 socket = Sock(app)
-
 app.secret_key = 'whEtr8uQoB'
-app.config['ALLOWED_EXTENSIONS'] = ['xlsx', 'XLSX']
-app.config['UPLOAD_FOLDER_INXEU'] = './uploads/inxeu'
-app.config['UPLOAD_FOLDER_INXD'] = './uploads/inxd'
-app.config['MAX_CONTENT_LENGTH'] = 50 * 1000 * 1000
+
 
 @socket.route('/echo')
 def echo(websocket):
+    # get_config(session["db"])
     print( "session[\"db\"] ", session["db"])
-    result = inx.functions.connect_db(websocket, session["db"])
+    result = inx.functions.connect_db(websocket, config_dict["connection_string"])
     if result != False:
-        conx = result[1] #From the tuple returned by the connection function
-        #Here we need to work on the files
+        conx = result[1] #From the tuple returned by the connection function, in the inx.function
+        # Here we need to work on the files
 
-        #Fare un elenco dei file che ci sono nella cartella uploads - tuple?
+        # Fare un elenco dei file che ci sono nella cartella uploads - tuple?
+        files = glob.glob(config_dict["upload_folder"])
+        print ("stop qui")
         # tipo nomefile
-        #lavorare i files
+        # lavorare i files
 
         
-
 @app.route("/")
 def home():
     # Set ConfigParser and read ini file
@@ -62,7 +60,8 @@ def inxd():
     # endpoint = request.url_rule.endpoint
     session["db"] = request.url_rule.endpoint
     print ( session["db"] )
-    clear_folders(app.config['UPLOAD_FOLDER_INXD'])
+    get_config(session["db"])
+    clear_folders(config_dict["upload_folder"])
     if request.method == 'POST':
         if 'form_ke30' in request.files and 'form_ke24' in request.files:
             the_ke30_fileobject = request.files['form_ke30']
@@ -108,6 +107,10 @@ def settings():
     return render_template("settings.html")
 
 def allowed_file(filename):
+    config_file = ConfigParser()
+    config_file.read("config.ini")
+    allowed_extensions = config_file["FILES"]["allowed_extensions"]
+
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 def securify_filename(filename):
@@ -131,6 +134,29 @@ def process_file(sock, data):
     sleep(1)
     sock.send("from process_file" + data)
 
+def get_config(company):
+    # Get these setting from settings.ini
+    config = ConfigParser()
+    config.read('config.ini')
+    global config_dict
+    config_dict = {
+        "sql_driver_ver": config["DEFAULT"]["sql_driver_ver"],
+        "max_content_length": config["DEFAULT"]["max_content_length"]
+    }
+    if company == "inxd":
+        config_dict["db_server"] = config["INXD_SERVER_CONFIG"]["inxd_db_host"]
+        config_dict["db_name"] = config["INXD_SERVER_CONFIG"]["inxd_db_name"]
+        config_dict["db_username"] = config["INXD_SERVER_CONFIG"]["inxd_db_username"]
+        config_dict["db_password"] = config["INXD_SERVER_CONFIG"]["inxd_db_password"]
+        config_dict["upload_folder"] = config["INXD_SERVER_CONFIG"]["inxd_upload_folder"]
+    else:
+        config_dict["db_server"] = config["INXEU_SERVER_CONFIG"]["inxeu_db_host"]
+        config_dict["db_name"] = config["INXEU_SERVER_CONFIG"]["inxeu_db_name"]
+        config_dict["db_username"] = config["INXEU_SERVER_CONFIG"]["inxeu_db_username"]
+        config_dict["db_password"] = config["INXEU_SERVER_CONFIG"]["inxeu_db_password"]
+        config_dict["upload_folder"] = config["INXEU_SERVER_CONFIG"]["inxeu_upload_folder"]
+    connection_string = "DRIVER={ODBC Driver " + config_dict["sql_driver_ver"] + " for SQL Server};SERVER=" + config_dict["db_server"] + ";DATABASE=" + config_dict["db_name"] + ";UID=" + config_dict["db_username"] + ";PWD=" + config_dict["db_password"] + ";Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
+    config_dict["connection_string"] = connection_string
 
 if __name__ == "__main__":
     app.run()
