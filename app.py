@@ -19,11 +19,11 @@ def echo(websocket):
     if result != False:
         conx = result[1] #From the tuple returned by the connection function, in the inx.function
         # Here we need to work on the files
-
         # Fare un elenco dei file che ci sono nella cartella uploads - tuple?
         files = glob.glob(config_dict["upload_folder"] + "/*")
-        websocket.send(conx)
-        websocket.send(files)
+        inx.functions.run_process(conx, files, websocket)
+        
+        
         # tipo nomefile
         # lavorare i files
 
