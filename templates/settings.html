@@ -1,12 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings</title>
-</head>
-<body>
-    
+{% extends "base.html" %}
+
+{% block content %}
+    <h3>DEFAULT</h3>
+    <form method="post">
+        <div class="form-group">
+          <label for="setting_value">SQL driver version:</label>
+          <input type="text" class="form-control font-monospace" id="sql-driver" name="sql-driver" value="{{ sql_driver }}">
+          <br>
+          <label for="setting_value">Max Content Length:</label>
+          <input type="text" class="form-control font-monospace" id="max-cont-len" name="max-cont-len" value="{{ max_cont_length }}">
+          <br>
+          <label for="setting_value">Allowed Extensions:</label>
+          <input type="text" class="form-control font-monospace" id="allowed-ext" name="allowed-ext" value="{{ allow_ext }}">
+          <br>
+          <label for="setting_value">Run Stored Procedures:</label>
+          <input type="text" class="form-control font-monospace" id="run-sp" name="run-sp" value="{{ run_sp }}">
+          <br>
+          <label for="setting_value">One Column at a time:</label>
+          <input type="text" class="form-control font-monospace" id="one-col-time" name="one-col-time" value="{{ one_column_per_time }}">
+        </div>
+
+
+    <br>
+    <h3>INXD_SERVER_CONFIG</h3>
+
+        <div class="form-group">
+          <label for="setting_value">DB Host:</label>
+          <input type="text" class="form-control font-monospace" id="inxd-db-host" name="inxd-db-host" value="{{ inxd_dbhost }}">
+          <br>
+          <label for="setting_value">DB Name:</label>
+          <input type="text" class="form-control font-monospace" id="inxd-db-name" name="inxd-db-name" value="{{ inxd_dbname }}">
+          <br>
+          <label for="setting_value">DB username:</label>
+          <input type="text" class="form-control font-monospace" id="inxd-db-username" name="inxd-db-username" value="{{ inxd_dbusername }}">
+          <br>
+          <label for="setting_value">DB password:</label>
+          <input type="text" class="form-control font-monospace" id="inxd-db-password" name="inxd-db-password" value="{{ inxd_dbpassword}}">
+          <br>
+          <label for="setting_value">Upload folder:</label>
+          <input type="text" class="form-control font-monospace" id="inxd-upload-folder" name="inxd-upload-folder" value="{{ inxd_uploadfolder }}">
+        </div>
+
+
+    <br>
+    <h3>INXEU_SERVER_CONFIG</h3>
+
+        <div class="form-group">
+          <label for="setting_value">DB Host:</label>
+          <input type="text" class="form-control font-monospace" id="inxeu-db-host" name="inxeu-db-host" value="{{ inxeu_dbhost }}">
+          <br>
+          <label for="setting_value">DB Name:</label>
+          <input type="text" class="form-control font-monospace" id="inxeu-db-name" name="inxeu-db-name" value="{{ inxeu_dbname }}">
+          <br>
+          <label for="setting_value">DB username:</label>
+          <input type="text" class="form-control font-monospace" id="inxeu-db-username" name="inxeu-db-username" value="{{ inxeu_dbusername }}">
+          <br>
+          <label for="setting_value">DB password:</label>
+          <input type="text" class="form-control font-monospace" id="inxeu-db-password" name="inxeu-db-password" value="{{ inxeu_dbpassword}}">
+          <br>
+          <label for="setting_value">Upload folder:</label>
+          <input type="text" class="form-control font-monospace" id="inxeu-upload-folder" name="inxeu-upload-folder" value="{{ inxeu_uploadfolder }}">
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
 </body>
-</html>
+{% endblock %}
