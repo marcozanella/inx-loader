@@ -166,29 +166,301 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                     "Period/Year.1":"Period/year1",
                     "Ship-to party.1":"Ship-to party1"
                 }
-                
                 table_name = "KE30_import"
-
-                # Read file into dataframe
-                df, sqlstatement = read_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name)
-
-                # Export - if needing to export an excel file for verification - with timestamp
-                # df.to_excel("./output_dataframe" + datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + ".xlsx")
-                
-                # Cleaning KE30_import
-                truncate_table(ws, conx, curs, table_name)
-                
-                # Function to execute database work
-                # need the duty_key to decide what to do
-                # need the SQL statement
-                # need the dataframe
-                # need to know if store procedure must be run or not (boolean)
-                grind_the_file(ws, duty_key, table_name, curs, sqlstatement, df)
+                work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs)
 
             case "ke24":
+                converters_dict = {
+                    "Currency": str,
+                    "CurrencyType": str,
+                    "RecordType": str,
+                    "YearMonth": str,
+                    "DocumentNumber": str,
+                    "ItemNumber": str,
+
+                    "CreateOn": datetime,
+                    
+                    "ReferenceDocument": str,
+                    "ReferenceItemNo": str,
+                    "CreateBy": str,
+                    "CompanyCode": str,
+                    "SenderCostCenter": str,
+                    "CostElement": str,
+                    "CurrencyKey": str,
+
+                    "SalesQuantity": float,
+                    
+                    "CostElement": str,
+                    "CurrencyKey": str,
+                    "SalesQuantity": str,
+                    "UnitSalesQuantity": str,
+                    "YearWeek": str,
+                    "Product": str,
+                    "IndustryCode1": str,
+                    "Industry": str,
+
+                    "PostingDate": datetime,
+                    
+                    "SalesDistrict": str,
+                    "ReferenceOrgUnit": str,
+                    "LogSystemSource": str,
+                    "ReferenceTransaction": str,
+                    "PointOfValuation": str,
+                    
+                    "Revenue": float,
+                    
+                    "InvoiceDate": datetime,
+                    
+                    "BillingType": str,
+                    
+                    "Year": int,
+                    
+                    "BusinessArea": str,
+                    "CustomerHierarchy01": str,
+                    "CustomerHierarchy02": str,
+                    "CustomerHierarchy03": str,
+                    "CustomerHierarchy04": str,
+                    "CustomerHierarchy05": str,
+                    "Origin": str,
+                    
+                    "HierarchyAssignment": int,
+                    
+                    "AnnualRebates": float,
+                    
+                    "SalesOrder": str,
+                    "CustomerGroup": str,
+                    
+                    "SalesOrderItem": int,
+                    
+                    "Customer": str,
+                    "ControllingArea": str,
+                    "PriceGroup": str,
+                    "MaterialPricingGroup": str,
+                    "CostObject": str,
+                    "CustomerAccountAssignmentGroup": str,
+                    "ShiToParty": str,
+                    
+                    "ExchangeRate": float,
+                    
+                    "Country": str,
+                    "Client": str,
+                    "MaterialGroup": str,
+                    
+                    "QuantityDiscount": float,
+                    
+                    "MarketSegment": str,
+                    "Color": str,
+                    "MajorLabel": str,
+                    "BrandName": str,
+                    "ColorGroup": str,
+                    "ProfitabilitySegmentNo": str,
+                    "PartnerProfSegment": str,
+                    "PartSubNumber": str,
+                    "SubNumber": str,
+                    
+                    "Period": int,
+                    "PlanActIndicator": int,
+                    
+                    "PartnerProfitCenter": str,
+                    "DyeInk": str,
+                    "ProfitCenter": str,
+                    "ProductHierarchy": str, 
+                    "SenderBusinessProcess": str,
+                    "WBSElement": str,
+                    "CurrencyOfRecord": str,
+                    "Order": str, 
+                    "UpdateStataus": str,
+                    "Division": str,
+                    "CanceledDocument": str, 
+                    "CanceledDocumentItem": str,
+                    "TimeCreated": str, 
+                    
+                    "Date": datetime,
+                    
+                    "Time": datetime,
+                    
+                    "Version": str,
+                    "SalesOrg": str,
+                    "SalesEmployee": str,
+                    "DistributionChannel": str,
+                    
+                    "CostOfSales": float,
+                    "Inplant_Depreciation": float,
+                    "FreightCharges": float,
+                    "MTS_InputVar": float,
+                    "MTS_InputPriveVar": float,
+                    "MTS_LotsizeVar": float,
+                    "MTO_FixFreightCost": float,
+                    "MTO_FixMaterialCost": float,
+                    "MTO_VariableMaterialCost": float,
+                    "MTO_FixOverheadCost": float,
+                    "MTO_VariableOverheadCost": float,
+                    "MTO_FixProductionCost": float,
+                    "MTS_OutputPriceVar": float,
+                    "MTO_VariableProductionCost": float,
+                    "Inplant_OtherExpenses": float,
+                    "Inplant_Payroll": float,
+                    "MTS_QuantityVar": float,
+                    "MTS_RemainingVar": float,
+                    "MTS_ResUsageVar": float,
+                    "MTS_FixFreightCost": float,
+                    "MTS_FixMaterialCost": float,
+                    "MTS_VariableMaterialCost": float,
+                    "MTS_FixOverheadCost": float,
+                    "MTS_VarialbleOverheadCost": float,
+                    "MTS_FixProductionCost": float,
+                    "MTS_VariableProductionCost": float,
+                    
+                    "GoodsIssueDate": datetime,
+                    
+                    "Plant": str,
+                    "NationalAccountManager": str,
+                    "ProductLine": str,
+                    "VPSales": str,
+                    "ProductLineSalesManager": str,
+                    "FieldSalesManager": str
+                }
+                rename_dict = {
+                    'Currency type':'CurrencyType',
+                    'Record Type':'RecordType',
+                    'Period/Year':'YearMonth',
+                    'Document number':'DocumentNumber',
+                    'Item number':'ItemNumber',
+                    'Created On':'CreatedOn',
+                    'Reference document':'ReferenceDocument',
+                    'Reference item no.':'ReferenceItemNo',
+                    'Created By':'CreatedBy',
+                    'Company Code':'CompanyCode',
+                    'Sender cost center':'senderCostCenter',
+                    'Cost Element':'CostElement',
+                    'Currency key':'CurrencyKey',
+                    'Sales quantity':'SalesQuantity',
+                    'Unit Sales quantity':'UnitSalesQuantity',
+                    'Week/year':'YearWeek',
+                    'Industry Code 1': 'IndustryCode1',
+                    'Posting date': 'PostingDate',
+                    'Sales district': 'SalesDistrict',
+                    'Reference Org Unit': 'ReferenceOrgUnit',
+                    'Log. system source': 'LogsystemSource',
+                    'Reference Transact.': 'ReferenceTransaction',
+                    'Point of valuation': 'PointOfValuation',
+                    'Invoice date': 'InvoiceDate',
+                    'Billing Type': 'BillingType',
+                    'Fiscal Year': 'Year',
+                    'Business Area': 'BusinessArea',
+                    'CustomerHierarchy01': 'CustomerHierarchy01',
+                    'CustomerHierarchy02': 'CustomerHierarchy02',
+                    'CustomerHierarchy03': 'CustomerHierarchy03',
+                    'CustomerHierarchy04': 'CustomerHierarchy04',
+                    'CustomerHierarchy05': 'CustomerHierarchy05',
+                    'Origin': 'Origin',
+                    'Hierarchy Assignment': 'HierarchyAssignment',
+                    'Annual rebates': 'AnnualRebates',
+                    'Sales Order': 'SalesOrder',
+                    'Customer group': 'CustomerGroup',
+                    'Sales Order Item': 'SalesOrderItem',
+                    'Customer': 'Customer',
+                    'Controlling Area': 'ControllingArea',
+                    'Price group': 'PriceGroup',
+                    'Material pricing grp': 'MaterialPricingGroup',
+                    'Cost Object': 'CostObject',
+                    'Cust.Acct.Assg.Group': 'CustomerAccountAssignmentGroup',
+                    'Ship-to party': 'ShiToParty',
+                    'Exchange rate': 'ExchangeRate',
+                    'Material Group': 'MaterialGroup',
+                    'Quantity discount': 'QuantityDiscount',
+                    'Market Segment': 'MarketSegment',
+                    'Major Label': 'MajorLabel',
+                    'Brand Name': 'BrandName',
+                    'Color Group': 'ColorGroup',
+                    'Profitab. Segmt No.': 'ProfitabilitySegmentNo',
+                    'Partner prof.segment': 'PartnerProfSegment',
+                    'Partner subnumber': 'PartSubNumber',
+                    'Subnumber': 'SubNumber',
+                    'Plan/Act. Indicator': 'PlanActIndicator',
+                    'Partner Profit Ctr': 'PartnerProfitCenter',
+                    'Dye Ink': 'DyeInk',
+                    'Profit Center': 'ProfitCenter',
+                    'Product hierarchy': 'ProductHierarchy',
+                    'Sender bus. process': 'SenderBusinessProcess',
+                    'WBS Element': 'WBSElement',
+                    'Currency of record': 'CurrencyOfRecord',
+                    'Update status': 'UpdateStataus',
+                    'Canceled document': 'CanceledDocument',
+                    'Canceled doc. item': 'CanceledDocumentItem',
+                    'Time created': 'TimeCreated',
+                    'Sales Organization': 'SalesOrg',
+                    'Sales employee': 'SalesEmployee',
+                    'Distribution Channel': 'DistributionChannel',
+                    'Cost of Sales - SD': 'CostOfSales',
+                    'INPLANT - depreciat.': 'Inplant_Depreciation',
+                    'Freight Charges': 'FreightCharges',
+                    'MTS -Input var.': 'MTS_InputVar',
+                    'MTS -Inp. prive var.': 'MTS_InputPriveVar',
+                    'MTS -Lotsize var.': 'MTS_LotsizeVar',
+                    'MTO -Fix.Freight Cst': 'MTO_FixFreightCost',
+                    'MTO -Fix.Mater. Cst': 'MTO_FixMaterialCost',
+                    'MTO -Vbl.Mater. Cst': 'MTO_VariableMaterialCost',
+                    'MTO -Fix.Overh. Cst': 'MTO_FixOverheadCost',
+                    'MTO -Vbl.Overh. Cst': 'MTO_VariableOverheadCost',
+                    'MTO -Fix.Prod. Cst': 'MTO_FixProductionCost',
+                    'MTS -Outp. price var': 'MTS_OutputPriceVar',
+                    'MTO -Vbl.Prod. Cst': 'MTO_VariableProductionCost',
+                    'INPLANT - other exp.': 'Inplant_OtherExpenses',
+                    'INPLANT - payroll': 'Inplant_Payroll',
+                    'MTS -Quantity var.': 'MTS_QuantityVar',
+                    'MTS -Remaining var.': 'MTS_RemainingVar',
+                    'MTS -Res. usage var.': 'MTS_ResUsageVar',
+                    'MTS -Fix.Freight Cst': 'MTS_FixFreightCost',
+                    'MTS - Fix. mat. cost': 'MTS_FixMaterialCost',
+                    'MTS - Vbl. mat. cost': 'MTS_VariableMaterialCost',
+                    'MTS -Fix.Overh. Cst': 'MTS_FixOverheadCost',
+                    'MTS -Vbl.Overh. Cst': 'MTS_VarialbleOverheadCost',
+                    'MTS -Fix.Prod. Cst': 'MTS_FixProductionCost',
+                    'MTS -Vbl.Prod. Cst': 'MTS_VariableProductionCost',
+                    'Goods Issue Date': 'GoodsIssueDate',
+                    'National Account Mgr': 'NationalAccountManager',
+                    'Product Line': 'ProductLine',
+                    'VP Sales': 'VPSales',
+                    'Prod Line Sls Mgr': 'ProductLineSalesManager',
+                    'Field Sales Mgr': 'FieldSalesManager'
+                }
+                table_name = "KE24_import"
+                work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs)
                 pass
             case "zaq":
-                pass
+                converters_dict = {
+                    'Material': str,
+                    'Description': str,
+                    'Sold to': int,
+                    'Name': str,
+                    'BillingDoc': str,
+                    'Invoice Qty': str,
+                    'UoM': str,
+                    'Unit Price': str,
+                    'Invoice Sales': str,
+                    'Curr.': str,
+                    'Batch': str,
+                    'GM (%)': str,
+                    'Prof': str,
+                    'PTrm': str,
+                    'Curr..1': str,
+                    'Cost':str,
+                    'Can': str,
+                    'Bill':str,
+                    'Item': str,
+                    'Tax amount': str,
+                    'Curr..2': str,
+                    'Dv': str,
+                    'ShPt': str,
+                    'Sales doc.': str,
+                    'ImportDate': str
+                }
+                rename_dict = {
+                    "Sales doc.":"SalesDoc"
+                }
+                table_name = "ZAQCODMI9_import"
+                work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs)
             case "oo":
                 pass
             case "oh":
@@ -361,4 +633,19 @@ def SQL_statement_fabricator(table_name, list_of_columns):
     sql_questionmarks = "(" + ("?, " * len(list_of_columns))[:-2] + ")"
     sql_statement = sql_insert + sql_fields + sql_value + sql_questionmarks
     return sql_statement
-    pass
+
+def work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs):
+    # Read file into dataframe and make SQL statement
+    df, sqlstatement = read_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name)
+    # Export - if needing to export an excel file for verification - with timestamp
+    # df.to_excel("./output_dataframe" + datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + ".xlsx")
+
+    # Cleaning table
+    truncate_table(ws, conx, curs, table_name)
+
+    # Function to execute database work
+    # need the duty_key to decide what to do
+    # need the SQL statement
+    # need the dataframe
+    # need to know if store procedure must be run or not (boolean)
+    grind_the_file(ws, duty_key, table_name, curs, sqlstatement, df)
