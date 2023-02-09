@@ -38,6 +38,10 @@ def home():
     # Set ConfigParser and read ini file
     return render_template("home.html")
 
+@app.route('/test')
+def test():
+    return render_template("test.html")
+
 @app.route('/inxeu', methods=['POST', 'GET'])
 def inxeu():
     clear_folders(app.config['UPLOAD_FOLDER_INXEU'])

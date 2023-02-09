@@ -10,8 +10,7 @@ import time
 # Returns True is succesfully connected, and the connection object, and the cursor
 def connect_db(the_socket, conn_string):
     
-    the_socket.send("Connection String:")
-    the_socket.send(conn_string)
+    the_socket.send("Connection String: <br>" + conn_string)
     try:
         conx = pyodbc.connect(conn_string)
         the_socket.send("Connection established successfully")
@@ -462,17 +461,180 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                 table_name = "ZAQCODMI9_import"
                 work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs)
             case "oo":
-                pass
+                # SAP transaction ZSDORDER
+                converters_dict = {
+                    "CustomerNumber": float,
+                    "Ship_to": float,
+                    "ValueInvoiced": float,
+
+                    "SalesOrderDate": datetime,
+                    "RequestedDate": datetime ,
+                    "PartialShipmentDate": datetime ,
+                    "InvoiceDate": datetime,
+                    "DeliveryDate": datetime,
+                    "ImportDate": datetime,
+
+                    "CustomerName": str,
+                    "Country": str,
+                    "Plant": str,
+                    "SalesOrderNumber": str,
+                    "StoreLocation": str,
+                    "OrderType": str,
+                    "ProductNumber": str,
+                    "ProductName": str,
+                    "QtyOrdered_unit": str,
+                    "QtyOpen_unit": str,
+                    "QtyPartialShipped_unit": str,
+                    "CustomerPONumber": str,
+                    "LineType": str,
+                    "InvoiceNumber": str,
+                    "DocumentCurrency": str,
+                    "QtyInvoiced_unit": str,
+                    
+                    "ItemLineNumber": int,
+                    "DaysLate": int,
+                    "QtyOrdered": int,
+                    "QtyOpen": int,
+                    "QtyPartialShipped": int,
+                    "LeadTime": int,
+                    "DeliveryNumber": int,
+                    "QtyInvoiced": int
+                }
+                rename_dict = {
+                    'Sold-to':'CustomerNumber',
+                    'Ship-to':'Ship_to',
+                    'Customer Name':'CustomerName',
+                    'Cty':'Country',
+                    'Sales Doc#':'SalesOrderNumber',
+                    'SOStLoc':'StoreLocation',
+                    'Item':'ItemLineNumber',
+                    'Sa Ty':'OrderType',
+                    'Order Date':'SalesOrderDate',
+                    'Req. dt':'RequestedDate',
+                    'PL. GI Dt':'PartialShipmentDate',
+                    'Days late':'DaysLate',
+                    'Material':'ProductNumber',
+                    'Material Description':'ProductName',
+                    'Ordered Qty':'QtyOrdered',
+                    'Unit':'QtyOrdered_unit',
+                    'Open Order Qty':'QtyOpen',
+                    'Unit.1':'QtyOpen_unit',
+                    'GI Qty':'QtyPartialShipped', 
+                    'Unit.3':'QtyPartialShipped_unit', 
+                    'Cust PO #':'CustomerPONumber', 
+                    'Lead time':'LeadTime'
+                }
+                table_name = "Orders"
+                work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs)
             case "oh":
+                # SAP transaction ZSDORDHIST - need?
                 pass
             case "oit":
-                pass
+                # SAP transaction FBL5N - Open Items
+                converters_dict = {
+                    "DocumentDate": datetime,
+                    "NetDueDate": datetime,
+                    "Arrears": int,
+                    "AmountInDocCurr": int,
+                    "DocCurr":str,
+                    "DocType": str,
+                    "CustomerNumber": int,
+                    "DocNumber": int,
+                    "InvoiceNumber": str,
+                    "PaymentTerms": str,
+                    "InvoiceRef": str,
+                    "PaymentDate": str,
+                    "DebCred": str,
+                    "PaymentTerms": str
+
+                }
+                rename_dict = {
+                    'Document Date':'DocumentDate',
+                    'Net due date':'NetDueDate',
+                    'Arrears after net due date':'Arrears',
+                    'Amount in doc. curr.':'AmountInDocCurr',
+                    'Document currency':'DocCurr',
+                    'Document Type':'DocType',
+                    'Account':'CustomerNumber',
+                    'Document Number':'DocNumber',
+                    'Billing Document':'InvoiceNumber',
+                    'Terms of Payment':'PaymentTerms',
+                    'Invoice reference':'InvoiceRef',
+                    'Payment date':'PaymentDate',
+                    'Debit/Credit ind':'DebCred'
+                    }
+                table_name = "FBL5N_open_import"
+                work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs)
             case "arr":
-                pass
+                # SAP Transaction FBL5N - All Items
+                converters_dict = {
+                    "DocumentDate": datetime,
+                    "NetDueDate": datetime,
+                    "Arrears": int,
+                    "AmountInDocCurr": int,
+                    "DocCurr":str,
+                    "DocType": str,
+                    "CustomerNumber": int,
+                    "DocNumber": int,
+                    "InvoiceNumber": str,
+                    "PaymentTerms": str,
+                    "InvoiceRef": str,
+                    "PaymentDate": str,
+                    "DebCred": str,
+                    "PaymentTerms": str
+
+                }
+                rename_dict = {
+                    'Document Date':'DocumentDate',
+                    'Net due date':'NetDueDate',
+                    'Arrears after net due date':'Arrears',
+                    'Amount in doc. curr.':'AmountInDocCurr',
+                    'Document currency':'DocCurr',
+                    'Document Type':'DocType',
+                    'Account':'CustomerNumber',
+                    'Document Number':'DocNumber',
+                    'Billing Document':'InvoiceNumber',
+                    'Terms of Payment':'PaymentTerms',
+                    'Invoice reference':'InvoiceRef',
+                    'Payment date':'PaymentDate',
+                    'Debit/Credit ind':'DebCred'
+                    }
+                table_name = "FBL5N_arr_import"
             case "prl":
-                pass
+                # SAP Transaction XXXXX - Customer Prices
+                converters_dict = {
+                    "ID": int,
+                    "CustomerID": int,
+                    "CustomerNumber": int,
+                    "CustomerName": str, 
+                    "ProductID": int,
+                    "ProductNumber": str,
+                    "ProductName": str,
+                    "Price": float,
+                    "Per": int,
+                    "UoM": str,
+                    "Volume_From": int,
+                    "Volume_To": int,
+                    "Valid_From": datetime,
+                    "Valid_To": datetime,
+                    "Currency": str,
+                    "Importdate": datetime
+                }
+                rename_dict = {
+                    'Customer':'CustomerNumber',
+                    'Customer Name':'CustomerName',
+                    'Material':'ProductNumber',
+                    'Material Description':'ProductName',
+                    'Scale Qty From': 'Volume_From',
+                    'Scale Qty To':'Volume_To',
+                    'Curr':'Currency',
+                    'Start Date':'Valid_From',
+                    'End Date':'Valid_To'
+                }
+                table_name = "Prices"
+                work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs)
     # Here store procedure are evaluated, and run if necessary
-    if stored_proc:
+    if stored_proc == 'True':
         if len(duties) > 0:
             ws.send("Execution of store procedures ...")
         for duty in duties:
@@ -598,7 +760,7 @@ def read_the_file(ws, duty_key, duty, converters_dict, rename_dict, tablename):
     oggi = oggi.strftime("%Y%m%d-%H%M%S") # 20201120-203456
     ws.send(" ---- read_the_file " + duty_key + " " + duty + " ")
     ws.send(" ---- we read the file and adjust data types and filed names")
-    df = pd.read_excel(duty, thousands='.', decimal=',', converters=converters_dict)
+    df = pd.read_excel(duty, thousands='.', decimal=',', converters=converters_dict, parse_dates=True)
     # ws.send(df.columns.to_list())
     ws.send("Renaming fields ...")
     df.rename(columns=rename_dict, inplace=True)
@@ -620,11 +782,14 @@ def read_the_file(ws, duty_key, duty, converters_dict, rename_dict, tablename):
     sql_full = SQL_statement_fabricator(tablename, df.columns.to_list())
     return df, sql_full
 
-def truncate_table(ws, conx, curs, tablename):
-    ws.send("Truncating ...")
-    sqlstatement = "TRUNCATE TABLE " + tablename
+def truncate_table(ws, conx, curs, tablename, duty_key=""):
+    ws.send("Cleaning ...")
+    if duty_key == "oo":
+        sqlstatement = "DELETE FROM " + tablename + " WHERE [LineType] = 'OO'"
+    else:
+        sqlstatement = "TRUNCATE TABLE " + tablename
     curs.execute(sqlstatement)
-    ws.send("Truncated table " + tablename)
+    ws.send("Cleaned table " + tablename)
 
 def SQL_statement_fabricator(table_name, list_of_columns):
     sql_insert = "INSERT INTO " + table_name
@@ -637,11 +802,32 @@ def SQL_statement_fabricator(table_name, list_of_columns):
 def work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs):
     # Read file into dataframe and make SQL statement
     df, sqlstatement = read_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name)
+    # Treating the dataframe based on the duty key
+    match duty_key:
+        case "oo":
+            df.drop({'Transit Time', 'Open Del Qty', 'Unit.2', 'In Stock', 'Equipment'}, axis='columns', inplace=True)
+            df = df.iloc[:-4]
+            df['ImportDate'] = datetime.datetime.now()
+            df['LineType'] = 'OO'
+            df['CustomerNumber'] = df['CustomerNumber'].fillna(df['Ship_to'])
+            df['CustomerNumber'] = np.where(df['CustomerNumber'] == '', df['Ship_to'], df['CustomerNumber'])
+        case "oit" | "arr":
+            df.drop ({'Net due date symbol', 'Arrears for discount 1', 'Baseline Payment Dte', 'Payment Block', 'Due net'}, axis='columns', inplace=True)
+            rows_to_retract = df['DocCurr'].nunique()
+            df=df.iloc[:-rows_to_retract]
+        case "arr":
+            df['ImportDate'] = datetime.datetime.now()
+            df['Valid_To'] = df['Valid_To'].astype(str)
+            df['Valid_To'] = df['Valid_To'].str[0:10]
+        
     # Export - if needing to export an excel file for verification - with timestamp
-    # df.to_excel("./output_dataframe" + datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + ".xlsx")
+    # df.to_excel("./output_dataframe_" + duty_key + "_" + datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + ".xlsx")
 
     # Cleaning table
-    truncate_table(ws, conx, curs, table_name)
+    if duty_key == "oo":
+        truncate_table(ws, conx, curs, table_name, duty_key="oo")
+    else:
+        truncate_table(ws, conx, curs, table_name)
 
     # Function to execute database work
     # need the duty_key to decide what to do

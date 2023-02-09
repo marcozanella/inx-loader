@@ -169,7 +169,7 @@ if not xl_filename_zaq=='':
     if time_before_cleaning==0: time_before_cleaning = datetime.datetime.now()
     df_ZAQ_excel = df_ZAQ_excel.replace(np.nan, '')
     
-if not xl_filename_oo=='':
+if not xl_filename_oo=='': # ZSDORDER
     # Changing column names
     df_OO_excel=pd.read_excel(str(xl_filename_oo), parse_dates = True)
     df_OO_excel.rename(columns={'Sold-to':'CustomerNumber', 'Ship-to':'Ship_to', 'Customer Name':'CustomerName', 'Cty':'Country', 'Sales Doc#':'SalesOrderNumber',
@@ -193,7 +193,7 @@ if not xl_filename_oo=='':
     df_OO_excel['CustomerNumber'] = np.where(df_OO_excel['CustomerNumber'] == '', df_OO_excel['Ship_to'], df_OO_excel['CustomerNumber'])
     df_OO_excel.to_excel('ZSDORDER_dataframe.xlsx')
 
-if not xl_filename_oh=='':
+if not xl_filename_oh=='': # Order History -
     # Changing column names
     df_OH_excel=pd.read_excel(str(xl_filename_oh), parse_dates = True)
     df_OH_excel.rename(columns={
@@ -225,7 +225,7 @@ if not xl_filename_oh=='':
     sizeof_df_OH_excel = len(df_OH_excel)
     df_OH_excel.to_excel('ZSDORDHIST_dataframe.xlsx')
 
-if not xl_filename_open=='':
+if not xl_filename_open=='': # FBL
     df_open_excel=pd.read_excel(str(xl_filename_open), parse_dates = True)
     df_open_excel.rename(columns={'Document Date':'DocumentDate', 'Net due date':'NetDueDate',
        'Arrears after net due date':'Arrears', 'Amount in doc. curr.':'AmountInDocCurr',
