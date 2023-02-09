@@ -4,3 +4,5 @@ sql_pbi_venv
 .vscode
 __pycache__/
 inx/__pycache__
+uploads/inxd/*
+uploads/inxeu/*
