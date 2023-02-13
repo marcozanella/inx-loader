@@ -21,6 +21,9 @@
     {% endwith %}
     {{ session["db"] }}
     <form method="post" enctype="multipart/form-data">
+        <div class="pt-3 pb-3 ms-2">
+            <input type="submit" class ="btn btn-primary" value="Upload">
+        </div>
         <div class="p-2">
             <label for="ke30" class="form-label">KE30</label>
             <input type="file" class="form-control" placeholder="select k30 file" name="form_ke30" accept=".xlsx">

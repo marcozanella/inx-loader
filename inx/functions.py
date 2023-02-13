@@ -20,9 +20,9 @@ def connect_db(the_socket, conn_string):
         conx.autocommit = False
         curs = conx.cursor()
         return (True, conx, curs)
-    except pyodbc.ConnectionError as ex:
-        the_socket.send("Connection Error")
-        return False
+    # except pyodbc.ConnectionError as ex:
+    #     the_socket.send("Connection Error")
+    #     return False
     except pyodbc.OperationalError as err:
         the_socket.send("DB connection could not be established")
         return False
@@ -167,7 +167,6 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                 }
                 table_name = "KE30_import"
                 work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs)
-
             case "ke24":
                 converters_dict = {
                     "Currency": str,
@@ -176,9 +175,6 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                     "YearMonth": str,
                     "DocumentNumber": str,
                     "ItemNumber": str,
-
-                    "CreateOn": datetime,
-                    
                     "ReferenceDocument": str,
                     "ReferenceItemNo": str,
                     "CreateBy": str,
@@ -186,9 +182,6 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                     "SenderCostCenter": str,
                     "CostElement": str,
                     "CurrencyKey": str,
-
-                    "SalesQuantity": float,
-                    
                     "CostElement": str,
                     "CurrencyKey": str,
                     "SalesQuantity": str,
@@ -197,23 +190,12 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                     "Product": str,
                     "IndustryCode1": str,
                     "Industry": str,
-
-                    "PostingDate": datetime,
-                    
                     "SalesDistrict": str,
                     "ReferenceOrgUnit": str,
                     "LogSystemSource": str,
                     "ReferenceTransaction": str,
                     "PointOfValuation": str,
-                    
-                    "Revenue": float,
-                    
-                    "InvoiceDate": datetime,
-                    
                     "BillingType": str,
-                    
-                    "Year": int,
-                    
                     "BusinessArea": str,
                     "CustomerHierarchy01": str,
                     "CustomerHierarchy02": str,
@@ -221,16 +203,8 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                     "CustomerHierarchy04": str,
                     "CustomerHierarchy05": str,
                     "Origin": str,
-                    
-                    "HierarchyAssignment": int,
-                    
-                    "AnnualRebates": float,
-                    
                     "SalesOrder": str,
                     "CustomerGroup": str,
-                    
-                    "SalesOrderItem": int,
-                    
                     "Customer": str,
                     "ControllingArea": str,
                     "PriceGroup": str,
@@ -238,15 +212,9 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                     "CostObject": str,
                     "CustomerAccountAssignmentGroup": str,
                     "ShiToParty": str,
-                    
-                    "ExchangeRate": float,
-                    
                     "Country": str,
                     "Client": str,
                     "MaterialGroup": str,
-                    
-                    "QuantityDiscount": float,
-                    
                     "MarketSegment": str,
                     "Color": str,
                     "MajorLabel": str,
@@ -256,10 +224,6 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                     "PartnerProfSegment": str,
                     "PartSubNumber": str,
                     "SubNumber": str,
-                    
-                    "Period": int,
-                    "PlanActIndicator": int,
-                    
                     "PartnerProfitCenter": str,
                     "DyeInk": str,
                     "ProfitCenter": str,
@@ -268,21 +232,41 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                     "WBSElement": str,
                     "CurrencyOfRecord": str,
                     "Order": str, 
-                    "UpdateStataus": str,
+                    "Update status": str,
                     "Division": str,
                     "CanceledDocument": str, 
                     "CanceledDocumentItem": str,
                     "TimeCreated": str, 
-                    
-                    "Date": datetime,
-                    
-                    "Time": datetime,
-                    
                     "Version": str,
                     "SalesOrg": str,
                     "SalesEmployee": str,
                     "DistributionChannel": str,
+                    "Plant": str,
+                    "NationalAccountManager": str,
+                    "ProductLine": str,
+                    "VPSales": str,
+                    "ProductLineSalesManager": str,
+                    "FieldSalesManager": str,
                     
+                    "CreateOn": datetime.date,
+                    "PostingDate": datetime.date,
+                    "InvoiceDate": datetime.date,
+                    "Date": datetime.date,
+                    "Time": datetime.datetime,
+                    # "Time": "%H:%M:%S",
+                    "GoodsIssueDate": datetime.date,
+
+                    "Year": int,
+                    "HierarchyAssignment": int,
+                    "SalesOrderItem": int,
+                    "Period": int,
+                    "PlanActIndicator": int,
+
+                    "SalesQuantity": float,
+                    "Revenue": float,
+                    "AnnualRebates": float,
+                    "ExchangeRate": float,
+                    "QuantityDiscount": float,
                     "CostOfSales": float,
                     "Inplant_Depreciation": float,
                     "FreightCharges": float,
@@ -308,17 +292,8 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                     "MTS_FixOverheadCost": float,
                     "MTS_VarialbleOverheadCost": float,
                     "MTS_FixProductionCost": float,
-                    "MTS_VariableProductionCost": float,
-                    
-                    "GoodsIssueDate": datetime,
-                    
-                    "Plant": str,
-                    "NationalAccountManager": str,
-                    "ProductLine": str,
-                    "VPSales": str,
-                    "ProductLineSalesManager": str,
-                    "FieldSalesManager": str
-                }
+                    "MTS_VariableProductionCost": float    
+                    }
                 rename_dict = {
                     'Currency type':'CurrencyType',
                     'Record Type':'RecordType',
@@ -384,7 +359,7 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                     'Sender bus. process': 'SenderBusinessProcess',
                     'WBS Element': 'WBSElement',
                     'Currency of record': 'CurrencyOfRecord',
-                    'Update status': 'UpdateStataus',
+                    'Update status': 'UpdateStatus',
                     'Canceled document': 'CanceledDocument',
                     'Canceled doc. item': 'CanceledDocumentItem',
                     'Time created': 'TimeCreated',
@@ -643,9 +618,13 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                     case "ke30":
                         sp_name = "spDoKE30Import"
                         curs.execute(sp_name)
+                        conx.commit()
                         ws.send(sp_name + " ...done")
                     case "ke24":
-                        pass
+                        sp_name = "spDoKE24Import"
+                        curs.execute(sp_name)
+                        conx.commit()
+                        ws.send(sp_name + "...done")
                     case "zaq":
                         pass
                     case "oo":
@@ -660,7 +639,7 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                         pass
 
        
-def grind_the_file(ws, duty_key, tab_name, cursor, sql_statement, dataframe):
+def grind_the_file(ws, duty_key, tab_name, connection, cursor, sql_statement, dataframe):
     ws.send("-------GRIND THE FILE -----")
     #Get setting of stored procedures
 
@@ -692,7 +671,7 @@ def grind_the_file(ws, duty_key, tab_name, cursor, sql_statement, dataframe):
         lower_limit = iteration * chunk_size
         upper_limit = (iteration * chunk_size) + (chunk_size - 1)
         if upper_limit >= df_length - 1: upper_limit = df_length - 1
-        ws.send("from " + str(lower_limit) + " to " + str(upper_limit) )
+        ws.send("section " + str(iteration) + " - from " + str(lower_limit) + " to " + str(upper_limit) )
         chunk_df = dataframe.iloc[lower_limit:upper_limit]
         cursor.fast_executemany = True
         start_time = time.time()
@@ -714,8 +693,11 @@ def grind_the_file(ws, duty_key, tab_name, cursor, sql_statement, dataframe):
             fields_and_time_dict = {}
             # Create a temporary disposable dataframe 
             disposable_df=pd.DataFrame()
-            # Cycle through columns 
+            # Cycle through columns
+            index = 0
+            total = len(chunk_df_copy.columns)
             for column in range(len(chunk_df_copy.columns)):
+                index +=1
                 cursor.execute("DELETE FROM " + tab_name)
                 chunk_df_copy = chunk_df.iloc[:,column:column+1]
                 col_name = chunk_df_copy.columns[0]
@@ -730,11 +712,14 @@ def grind_the_file(ws, duty_key, tab_name, cursor, sql_statement, dataframe):
                 try:
                     cursor.executemany(sql_statement_per_column, chunk_df_copy.values.tolist())
                 except pyodbc.Error as err:
-                    ws.send(err)
+                    message = "Error with column: " + col_name + "<br>" + str(err) + "<br>"
+                    message += "SQL statement <br>" + sql_statement_per_column + "<br>"
+                    message += "values: " + str(chunk_df_copy.values.tolist())
+                    ws.send(message)
                 time_at_finish = time.time()
                 time_lapsed = time_at_finish - time_at_start
                 fields_and_time_dict[col_name] = time_lapsed
-                ws.send(col_name + "\t\ttime lasped: {:0.2f}".format(time_lapsed) + " sec.")
+                ws.send(str(index) + "/" + str(total) + " " + col_name + "<br>...time lasped: {:0.2f}".format(time_lapsed) + " sec.")
             ws.send("end of the one_column_per_time process")
         ##########################################################################
 
@@ -742,15 +727,15 @@ def grind_the_file(ws, duty_key, tab_name, cursor, sql_statement, dataframe):
         # one filed is slower than others - this is a debug strategy
         try:
             cursor.executemany(sql_statement, chunk_df.values.tolist())
+            connection.commit()
         except pyodbc.ProgrammingError as err:
             ws.send("*******************************************")
             ws.send(str(err))
 
         end_time = time.time()
         duration = end_time - start_time
-        ws.send("      done in " + str(round(duration, 2)) + " sec        @ " + str(round(chunk_size / duration, 2)) + " rec/sec")
-
-    pass
+        ws.send("section " + str(iteration) + " done in " + str(round(duration, 2)) + " sec        @ " + str(round(chunk_size / duration, 2)) + " rec/sec")
+    ws.send ("Finished with table: " + tab_name)
 
 # read_the_file
 # Reads the Excel file, creates a dataframe, and build the SQL statement
@@ -759,8 +744,8 @@ def read_the_file(ws, duty_key, duty, converters_dict, rename_dict, tablename):
     oggi = datetime.datetime.now()
     oggi = oggi.strftime("%Y%m%d-%H%M%S") # 20201120-203456
     ws.send(" ---- read_the_file " + duty_key + " " + duty + " ")
-    ws.send(" ---- we read the file and adjust data types and filed names")
-    df = pd.read_excel(duty, thousands='.', decimal=',', converters=converters_dict, parse_dates=True)
+    ws.send(" ---- we read the file and adjust data types and field names")
+    df = pd.read_excel(duty, thousands='.', decimal=',', dtype=converters_dict, parse_dates=True)
     # ws.send(df.columns.to_list())
     ws.send("Renaming fields ...")
     df.rename(columns=rename_dict, inplace=True)
@@ -771,12 +756,33 @@ def read_the_file(ws, duty_key, duty, converters_dict, rename_dict, tablename):
     match duty_key:
         case "ke30":
             df['Importtimestamp'] = oggi
-            df["YearMonth"] = (df["Fiscal Year"].astype(str) + df["Period"].astype(str).str[-2:]).astype(int)
-
-            # df['YearMonth'] = str(int(df['Fiscal Year'])*100) + str(int(df['Period'])).zfill(2)
+            df["YearMonth"] = (df["Year"].astype(str) + df["Period"].astype(str).str.zfill(2)).astype(int)
             df = df.replace(np.nan, '')
         case "ke24":
-            pass
+            df["CreatedOn"] = df['CreatedOn'].dt.date
+            df['PostingDate'] = df['PostingDate'].dt.date
+            df['InvoiceDate'] = df['InvoiceDate'].dt.date
+            df['GoodsIssueDate'] = df['GoodsIssueDate'].dt.date
+            df["Date"] = df.apply(lambda x: datetime.datetime.combine(x['Date'], x["Time"]).strftime("%Y-%m-%d %H:%M:%S"), axis=1)
+            df["YearMonth"] = (df["Year"].astype(str) + df["Period"].astype(str).str.zfill(2)).astype(int)
+        case "oo":
+            df.drop({'Transit Time', 'Open Del Qty', 'Unit.2', 'In Stock', 'Equipment'}, axis='columns', inplace=True)
+            df = df.iloc[:-4]
+            df['ImportDate'] = datetime.datetime.now()
+            df['LineType'] = 'OO'
+            df['CustomerNumber'] = df['CustomerNumber'].fillna(df['Ship_to'])
+            df['CustomerNumber'] = np.where(df['CustomerNumber'] == '', df['Ship_to'], df['CustomerNumber'])
+        case "oit" | "arr":
+            df.drop ({'Net due date symbol', 'Arrears for discount 1', 'Baseline Payment Dte', 'Payment Block', 'Due net'}, axis='columns', inplace=True)
+            rows_to_retract = df['DocCurr'].nunique()
+            df=df.iloc[:-rows_to_retract]
+        case "arr":
+            df['ImportDate'] = datetime.datetime.now()
+            df['Valid_To'] = df['Valid_To'].astype(str)
+            df['Valid_To'] = df['Valid_To'].str[0:10]
+        case "prl":
+            df.drop(columns=['SOrg', 'Dv', 'CTyp'], axis=1, inplace=True)
+            df['ImportDate'] = datetime.datetime.now()
 
     ws.send("there are " + str(len(df.columns)) + " columns")
     sql_full = SQL_statement_fabricator(tablename, df.columns.to_list())
@@ -802,23 +808,6 @@ def SQL_statement_fabricator(table_name, list_of_columns):
 def work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs):
     # Read file into dataframe and make SQL statement
     df, sqlstatement = read_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name)
-    # Treating the dataframe based on the duty key
-    match duty_key:
-        case "oo":
-            df.drop({'Transit Time', 'Open Del Qty', 'Unit.2', 'In Stock', 'Equipment'}, axis='columns', inplace=True)
-            df = df.iloc[:-4]
-            df['ImportDate'] = datetime.datetime.now()
-            df['LineType'] = 'OO'
-            df['CustomerNumber'] = df['CustomerNumber'].fillna(df['Ship_to'])
-            df['CustomerNumber'] = np.where(df['CustomerNumber'] == '', df['Ship_to'], df['CustomerNumber'])
-        case "oit" | "arr":
-            df.drop ({'Net due date symbol', 'Arrears for discount 1', 'Baseline Payment Dte', 'Payment Block', 'Due net'}, axis='columns', inplace=True)
-            rows_to_retract = df['DocCurr'].nunique()
-            df=df.iloc[:-rows_to_retract]
-        case "arr":
-            df['ImportDate'] = datetime.datetime.now()
-            df['Valid_To'] = df['Valid_To'].astype(str)
-            df['Valid_To'] = df['Valid_To'].str[0:10]
         
     # Export - if needing to export an excel file for verification - with timestamp
     # df.to_excel("./output_dataframe_" + duty_key + "_" + datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + ".xlsx")
@@ -834,4 +823,4 @@ def work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_nam
     # need the SQL statement
     # need the dataframe
     # need to know if store procedure must be run or not (boolean)
-    grind_the_file(ws, duty_key, table_name, curs, sqlstatement, df)
+    grind_the_file(ws, duty_key, table_name, conx, curs, sqlstatement, df)

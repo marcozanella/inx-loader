@@ -30,7 +30,7 @@ def echo(websocket):
 
         # Pass filers and other essential variables to the run_process funstion
         inx.functions.run_process(websocket, conx, curs, files, config_dict['run_stored_procedures'])
-
+        websocket.send("Process ended")
         
         
 @app.route("/")
