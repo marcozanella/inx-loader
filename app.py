@@ -31,8 +31,7 @@ def echo(websocket):
         # Pass filers and other essential variables to the run_process funstion
         inx.functions.run_process(websocket, conx, curs, files, config_dict['run_stored_procedures'])
         websocket.send("Process ended")
-        
-        
+              
 @app.route("/")
 def home():
     # Set ConfigParser and read ini file
@@ -203,4 +202,4 @@ def get_config(company):
     config_dict["connection_string"] = connection_string
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run()
