@@ -1,5 +1,5 @@
 from configparser import ConfigParser
-import pyodbc, random
+import pyodbc
 import glob
 import pandas as pd
 import numpy as np
@@ -69,7 +69,8 @@ def run_process(ws, conx, curs, files, stored_proc=False):
         if "prl" in file:
             duties["prl"] = file
     ws.send("duties: " + str(duties))
-    ws.send("Processing, it may take some time ..., don't refresh or leave the page ")
+    ws.send("Processing, it may take some time ...")
+    ws.send("<h1 class='text-center text-uppercase'>don't refresh or leave the page</h1>")
     for duty_key, duty in duties.items():
         ws.send("duty_key: " + duty_key + ", duty: " + duty)
         oggi = datetime.datetime.now()
@@ -406,29 +407,35 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                 converters_dict = {
                     'Material': str,
                     'Description': str,
-                    'Sold to': int,
                     'Name': str,
                     'BillingDoc': str,
-                    'Invoice Qty': str,
                     'UoM': str,
-                    'Unit Price': str,
-                    'Invoice Sales': str,
+                    'Unit Price': float,
+                    'Invoice Sales': float,
                     'Curr.': str,
                     'Batch': str,
-                    'GM (%)': str,
+                    'GM (%)': float,
                     'Prof': str,
                     'PTrm': str,
                     'Curr..1': str,
-                    'Cost':str,
                     'Can': str,
                     'Bill':str,
-                    'Item': str,
                     'Tax amount': str,
                     'Curr..2': str,
                     'Dv': str,
                     'ShPt': str,
-                    'Sales doc.': str,
-                    'ImportDate': str
+                    'ImportDate': str,
+                    
+                    'Sales doc.': float,
+                    'Item': float,
+                    'Sold to': float,                    
+                    'Cost':float,
+                    'GM (%)': float,
+                    'Invoice Sales': float,
+                    'Unit Price': float,
+                    'Invoice Qty': float,
+                    
+                    'Billing date': datetime.date 
                 }
                 rename_dict = {
                     "Sales doc.":"SalesDoc"
@@ -626,7 +633,10 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                         conx.commit()
                         ws.send(sp_name + "...done")
                     case "zaq":
-                        pass
+                        sp_name = "spDoZAQCODMI9Import"
+                        curs.execute(sp_name)
+                        conx.commit()
+                        ws.send(sp_name + "...done")
                     case "oo":
                         pass
                     case "oh":
@@ -637,12 +647,9 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                         pass
                     case "prl":
                         pass
-
        
 def grind_the_file(ws, duty_key, tab_name, connection, cursor, sql_statement, dataframe):
     ws.send("-------GRIND THE FILE -----")
-    #Get setting of stored procedures
-
     start_time = time.time()
     df_length = len(dataframe)
     if df_length > 19999:
@@ -751,21 +758,26 @@ def read_the_file(ws, duty_key, duty, converters_dict, rename_dict, tablename):
     df.rename(columns=rename_dict, inplace=True)
     # ws.send(df.columns.to_list())
     ws.send(duty_key + ": " + str(len(df)) + "records ")
-    df = df.replace(np.nan, '')
+    
     ws.send(duty_key + " dataframe created")
     match duty_key:
         case "ke30":
+            df = df.replace(np.nan, '')
             df['Importtimestamp'] = oggi
             df["YearMonth"] = (df["Year"].astype(str) + df["Period"].astype(str).str.zfill(2)).astype(int)
             df = df.replace(np.nan, '')
         case "ke24":
+            df = df.replace(np.nan, '')
             df["CreatedOn"] = df['CreatedOn'].dt.date
             df['PostingDate'] = df['PostingDate'].dt.date
             df['InvoiceDate'] = df['InvoiceDate'].dt.date
             df['GoodsIssueDate'] = df['GoodsIssueDate'].dt.date
             df["Date"] = df.apply(lambda x: datetime.datetime.combine(x['Date'], x["Time"]).strftime("%Y-%m-%d %H:%M:%S"), axis=1)
             df["YearMonth"] = (df["Year"].astype(str) + df["Period"].astype(str).str.zfill(2)).astype(int)
+        case "zaq":
+            df["SalesDoc"].astype('Int64')
         case "oo":
+            df = df.replace(np.nan, '')
             df.drop({'Transit Time', 'Open Del Qty', 'Unit.2', 'In Stock', 'Equipment'}, axis='columns', inplace=True)
             df = df.iloc[:-4]
             df['ImportDate'] = datetime.datetime.now()
@@ -786,6 +798,7 @@ def read_the_file(ws, duty_key, duty, converters_dict, rename_dict, tablename):
 
     ws.send("there are " + str(len(df.columns)) + " columns")
     sql_full = SQL_statement_fabricator(tablename, df.columns.to_list())
+    ws.send(sql_full)
     return df, sql_full
 
 def truncate_table(ws, conx, curs, tablename, duty_key=""):
@@ -795,6 +808,7 @@ def truncate_table(ws, conx, curs, tablename, duty_key=""):
     else:
         sqlstatement = "TRUNCATE TABLE " + tablename
     curs.execute(sqlstatement)
+    conx.commit()
     ws.send("Cleaned table " + tablename)
 
 def SQL_statement_fabricator(table_name, list_of_columns):
