@@ -510,26 +510,89 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                 work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs)
             case "oh":
                 # SAP transaction ZSDORDHIST - need?
+                converters_dict = {
+                    "CustomerNumber": float,
+                    "Ship_to": float,
+                    "ValueInvoiced": float,
+
+                    "SalesOrderDate": datetime,
+                    "RequestedDate": datetime ,
+                    "PartialShipmentDate": datetime ,
+                    "InvoiceDate": datetime,
+                    "DeliveryDate": datetime,
+                    "ImportDate": datetime,
+
+                    "CustomerName": str,
+                    "Country": str,
+                    "Plant": str,
+                    "SalesOrderNumber": str,
+                    "StoreLocation": str,
+                    "OrderType": str,
+                    "ProductNumber": str,
+                    "ProductName": str,
+                    "QtyOrdered_unit": str,
+                    "QtyOpen_unit": str,
+                    "QtyPartialShipped_unit": str,
+                    "CustomerPONumber": str,
+                    "LineType": str,
+                    "InvoiceNumber": str,
+                    "DocumentCurrency": str,
+                    "QtyInvoiced_unit": str,
+                    
+                    "ItemLineNumber": int,
+                    "DaysLate": int,
+                    "QtyOrdered": int,
+                    "QtyOpen": int,
+                    "QtyPartialShipped": int,
+                    "LeadTime": int,
+                    "DeliveryNumber": int,
+                    "QtyInvoiced": int
+                }
+                rename_dict = {
+                    'Sold-to':'CustomerNumber',
+                    'Ship-to':'Ship_to',
+                    'Customer Name':'CustomerName',
+                    'Cty':'Country',
+                    'Sales Doc#':'SalesOrderNumber',
+                    'SOStLoc':'StoreLocation',
+                    'Item':'ItemLineNumber',
+                    'Sa Ty':'OrderType',
+                    'Order Date':'SalesOrderDate',
+                    'Req. dt':'RequestedDate',
+                    'PL. GI Dt':'PartialShipmentDate',
+                    'Days late':'DaysLate',
+                    'Material':'ProductNumber',
+                    'Material Description':'ProductName',
+                    'Ordered Qty':'QtyOrdered',
+                    'Unit':'QtyOrdered_unit',
+                    'Open Order Qty':'QtyOpen',
+                    'Unit.1':'QtyOpen_unit',
+                    'GI Qty':'QtyPartialShipped', 
+                    'Unit.3':'QtyPartialShipped_unit', 
+                    'Cust PO #':'CustomerPONumber', 
+                    'Lead time':'LeadTime'
+                }
+                table_name = "Orders"
+                work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs)
                 pass
             case "oit":
                 # SAP transaction FBL5N - Open Items
                 converters_dict = {
-                    "DocumentDate": datetime,
-                    "NetDueDate": datetime,
-                    "Arrears": int,
-                    "AmountInDocCurr": int,
-                    "DocCurr":str,
-                    "DocType": str,
-                    "CustomerNumber": int,
-                    "DocNumber": int,
-                    "InvoiceNumber": str,
-                    "PaymentTerms": str,
-                    "InvoiceRef": str,
-                    "PaymentDate": str,
-                    "DebCred": str,
-                    "PaymentTerms": str
-
+                    "Document Date": datetime.date,
+                    "Net due date": datetime.date,
+                    "Arrears after net due date": float,
+                    "Amount in doc. curr.": float,
+                    "Document currency":str,
+                    "Document type": str,
+                    # "Account": int,
+                    "Document Number": str,
+                    "Billing Document": str,
+                    "Term of Payment": str,
+                    "Invoice reference": str,
+                    "Payment date": datetime.date,
+                    "Debit/Credit ind": str
                 }
+                
                 rename_dict = {
                     'Document Date':'DocumentDate',
                     'Net due date':'NetDueDate',
@@ -545,26 +608,31 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                     'Payment date':'PaymentDate',
                     'Debit/Credit ind':'DebCred'
                     }
+                drop_list = [
+                    'Net due date symbol',
+                    'Arrears for discount 1',
+                    'Baseline Payment Dte',
+                    'Payment Block',
+                    'Due net'
+                ]
                 table_name = "FBL5N_open_import"
-                work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs)
+                work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs, drop_list)
             case "arr":
                 # SAP Transaction FBL5N - All Items
                 converters_dict = {
-                    "DocumentDate": datetime,
-                    "NetDueDate": datetime,
-                    "Arrears": int,
-                    "AmountInDocCurr": int,
-                    "DocCurr":str,
-                    "DocType": str,
-                    "CustomerNumber": int,
-                    "DocNumber": int,
-                    "InvoiceNumber": str,
-                    "PaymentTerms": str,
-                    "InvoiceRef": str,
-                    "PaymentDate": str,
-                    "DebCred": str,
-                    "PaymentTerms": str
-
+                    "Document Date": datetime.date,
+                    "Net due date": datetime.date,
+                    "Arrears after net due date": float,
+                    "Amount in doc. curr.": float,
+                    "Document currency":str,
+                    "Document type": str,
+                    # "Account": int,
+                    "Document Number": str,
+                    "Billing Document": str,
+                    "Term of Payment": str,
+                    "Invoice reference": str,
+                    "Payment date": datetime.date,
+                    "Debit/Credit ind": str
                 }
                 rename_dict = {
                     'Document Date':'DocumentDate',
@@ -581,7 +649,15 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                     'Payment date':'PaymentDate',
                     'Debit/Credit ind':'DebCred'
                     }
+                drop_list = [
+                    'Net due date symbol',
+                    'Arrears for discount 1',
+                    'Baseline Payment Dte',
+                    'Payment Block',
+                    'Due net'
+                ]
                 table_name = "FBL5N_arr_import"
+                work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs, drop_list)
             case "prl":
                 # SAP Transaction XXXXX - Customer Prices
                 converters_dict = {
@@ -649,7 +725,7 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                         pass
        
 def grind_the_file(ws, duty_key, tab_name, connection, cursor, sql_statement, dataframe):
-    ws.send("-------GRIND THE FILE -----")
+    ws.send("------- PROCESSING THE FILE -----")
     start_time = time.time()
     df_length = len(dataframe)
     if df_length > 19999:
@@ -666,12 +742,11 @@ def grind_the_file(ws, duty_key, tab_name, connection, cursor, sql_statement, da
         chunk_size = 500
     
     # Determination of how many rounds
-    iterations = df_length / chunk_size
-    if ( iterations - int(iterations) ) != 0:
-        iterations = int(iterations) + 1
+    if df_length % chunk_size > 0:
+        iterations = int(df_length / chunk_size) + 1
     else:
-        iterations = int(iterations)
-        ws.send("executing " + duty_key + " in " + str(iterations) + " rounds...")
+        iterations = int(df_length / chunk_size)
+    ws.send("executing " + duty_key + " in " + str(iterations) + " iterations...")
 
     # Iterate over chunks
     for iteration in range(iterations):
@@ -679,16 +754,14 @@ def grind_the_file(ws, duty_key, tab_name, connection, cursor, sql_statement, da
         upper_limit = (iteration * chunk_size) + (chunk_size - 1)
         if upper_limit >= df_length - 1: upper_limit = df_length - 1
         ws.send("section " + str(iteration) + " - from " + str(lower_limit) + " to " + str(upper_limit) )
-        chunk_df = dataframe.iloc[lower_limit:upper_limit]
+        chunk_df = dataframe.iloc[lower_limit:upper_limit + 1]
         cursor.fast_executemany = True
         start_time = time.time()
-
         # Must implement the one_field_at_a_time insert on the chunc to see if
         config = ConfigParser()
         config.read('config.ini')
         one_column_per_time = config["DEFAULT"]["one_column_at_a_time"]
         
-
         ########################################################################
         # This section is adding one column at a time to check if one field is
         # giving too long insertion time
@@ -747,7 +820,7 @@ def grind_the_file(ws, duty_key, tab_name, connection, cursor, sql_statement, da
 # read_the_file
 # Reads the Excel file, creates a dataframe, and build the SQL statement
 # It returns both the dataframe and the SQL statement
-def read_the_file(ws, duty_key, duty, converters_dict, rename_dict, tablename):
+def read_the_file(ws, duty_key, duty, converters_dict, rename_dict, drop_list, tablename):
     oggi = datetime.datetime.now()
     oggi = oggi.strftime("%Y%m%d-%H%M%S") # 20201120-203456
     ws.send(" ---- read_the_file " + duty_key + " " + duty + " ")
@@ -757,9 +830,6 @@ def read_the_file(ws, duty_key, duty, converters_dict, rename_dict, tablename):
     ws.send("Renaming fields ...")
     df.rename(columns=rename_dict, inplace=True)
     # ws.send(df.columns.to_list())
-    ws.send(duty_key + ": " + str(len(df)) + "records ")
-    
-    ws.send(duty_key + " dataframe created")
     match duty_key:
         case "ke30":
             df = df.replace(np.nan, '')
@@ -776,26 +846,47 @@ def read_the_file(ws, duty_key, duty, converters_dict, rename_dict, tablename):
             df["YearMonth"] = (df["Year"].astype(str) + df["Period"].astype(str).str.zfill(2)).astype(int)
         case "zaq":
             df["SalesDoc"].astype('Int64')
+            df["Sold to"].astype('Int64')
+            df["Billing date"] = df['Billing date'].apply(lambda x: x.strftime("%Y-%m-%d") if not pd.isna(x) else x)
+            # Get unique values of UoM
+            # Get unique values of Curr.
+            # Get MAX values between the 2
+            # retract dataframe
+            num_max_uom = df['UoM'].nunique()
+            num_max_curr = df['Curr.'].nunique()
+            max_unique = max(num_max_curr, num_max_uom)
+            df = df.head(len(df) - max_unique)            
+            # df = df.replace(np.nan, '')
         case "oo":
-            df = df.replace(np.nan, '')
+            # Columns T V and X to use as a measure to cut tail
+            # df = df.replace(np.nan, '')
             df.drop({'Transit Time', 'Open Del Qty', 'Unit.2', 'In Stock', 'Equipment'}, axis='columns', inplace=True)
-            df = df.iloc[:-4]
-            df['ImportDate'] = datetime.datetime.now()
+            # df = df.iloc[:-4]
+            df.loc[:,"ImportDate"] = datetime.datetime.now()
             df['LineType'] = 'OO'
+            df = df[df["Plant"].notnull()]
+            df["SalesOrderDate"] = df['SalesOrderDate'].apply(lambda x: x.strftime("%Y-%m-%d") if not pd.isna(x) else x)
+            df["RequestedDate"] = df['RequestedDate'].apply(lambda x: x.strftime("%Y-%m-%d") if not pd.isna(x) else x)
+            df["PartialShipmentDate"] = df['PartialShipmentDate'].apply(lambda x: x.strftime("%Y-%m-%d") if not pd.isna(x) else x)
+            df["ImportDate"] = df['ImportDate'].apply(lambda x: x.strftime("%Y-%m-%d") if not pd.isna(x) else x)
             df['CustomerNumber'] = df['CustomerNumber'].fillna(df['Ship_to'])
             df['CustomerNumber'] = np.where(df['CustomerNumber'] == '', df['Ship_to'], df['CustomerNumber'])
+        case "oh":
+            pass
         case "oit" | "arr":
-            df.drop ({'Net due date symbol', 'Arrears for discount 1', 'Baseline Payment Dte', 'Payment Block', 'Due net'}, axis='columns', inplace=True)
+            df.drop(drop_list, axis='columns', inplace=True)
+            # df.drop ({'Net due date symbol', 'Arrears for discount 1', 'Baseline Payment Dte', 'Payment Block', 'Due net'}, axis='columns', inplace=True)
             rows_to_retract = df['DocCurr'].nunique()
             df=df.iloc[:-rows_to_retract]
-        case "arr":
-            df['ImportDate'] = datetime.datetime.now()
-            df['Valid_To'] = df['Valid_To'].astype(str)
-            df['Valid_To'] = df['Valid_To'].str[0:10]
+            df['DocumentDate'] = df['DocumentDate'].dt.date
+            df['NetDueDate'] = df['NetDueDate'].dt.date
+            df['PaymentDate'] = df['PaymentDate'].dt.date
+            df['Arrears'] = df['Arrears'].fillna(0).astype(int)
         case "prl":
             df.drop(columns=['SOrg', 'Dv', 'CTyp'], axis=1, inplace=True)
             df['ImportDate'] = datetime.datetime.now()
-
+    ws.send(duty_key + ": " + str(len(df)) + "records ")
+    ws.send(duty_key + " dataframe created")
     ws.send("there are " + str(len(df.columns)) + " columns")
     sql_full = SQL_statement_fabricator(tablename, df.columns.to_list())
     ws.send(sql_full)
@@ -805,8 +896,11 @@ def truncate_table(ws, conx, curs, tablename, duty_key=""):
     ws.send("Cleaning ...")
     if duty_key == "oo":
         sqlstatement = "DELETE FROM " + tablename + " WHERE [LineType] = 'OO'"
+    if duty_key == "oh":
+        sqlstatement = "DELETE FROM " + tablename + " WHERE [LineType] = 'OH'"
     else:
         sqlstatement = "TRUNCATE TABLE " + tablename
+    ws.send(sqlstatement)
     curs.execute(sqlstatement)
     conx.commit()
     ws.send("Cleaned table " + tablename)
@@ -819,16 +913,22 @@ def SQL_statement_fabricator(table_name, list_of_columns):
     sql_statement = sql_insert + sql_fields + sql_value + sql_questionmarks
     return sql_statement
 
-def work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs):
+def work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name, conx, curs, drop_list = []):
     # Read file into dataframe and make SQL statement
-    df, sqlstatement = read_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_name)
+    df, sqlstatement = read_the_file(ws, duty_key, duty, converters_dict, rename_dict, drop_list, table_name)
         
     # Export - if needing to export an excel file for verification - with timestamp
-    # df.to_excel("./output_dataframe_" + duty_key + "_" + datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + ".xlsx")
+    config = ConfigParser()
+    config.read('config.ini')
+    ws.send('There are ' + str(len(df)) + ' in the dataframe')
+    if config.get('DEFAULT', 'export_excel_dataframe') == "True":
+        df.to_excel("./output_dataframe_" + duty_key + "_" + datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + ".xlsx")
 
     # Cleaning table
     if duty_key == "oo":
         truncate_table(ws, conx, curs, table_name, duty_key="oo")
+    elif duty_key == "oh":
+        truncate_table(ws, conx, curs, table_name, duty_key="oh")
     else:
         truncate_table(ws, conx, curs, table_name)
 

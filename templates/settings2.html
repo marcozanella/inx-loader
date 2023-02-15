@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h3>DEFAULT</h3>
+    <form method="post">
+      {{ form.csrf_token }}
+        <div class="form-group">
+          {{ form.sql_driver_version.label }}
+          {{ form.sql_driver_version() }}
+        </div>
+        <div class="form-group">
+          {{ form.toggle_stored_proc.label }}
+          {{ form.toggle_stored_proc() }}
+        </div>
+          {{ form.submit_button() }}
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</body>
+{% endblock %}

@@ -15,7 +15,7 @@ const socket = new WebSocket('ws://' + location.host + '/echo');
   });
 
   socket.addEventListener('close', ev => {
-    log("The channel was closed with message: <br>" + ev.data)
+    log("The channel with the backend is closed<br><br>message content:<br>" + ev.data)
   });
 
   // document.getElementById('form').onsubmit = ev => {
