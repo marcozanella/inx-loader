@@ -699,20 +699,13 @@ def run_process(ws, conx, curs, files, stored_proc=False):
             if duties[duty] != "":
                 match duty:
                     case "ke30":
-                        sp_name = "spDoKE30Import"
-                        curs.execute(sp_name)
-                        conx.commit()
-                        ws.send(sp_name + " ...done")
+                        run_stored(ws, "spDoKE30Import", curs, conx)
                     case "ke24":
-                        sp_name = "spDoKE24Import"
-                        curs.execute(sp_name)
-                        conx.commit()
-                        ws.send(sp_name + "...done")
+                        run_stored(ws, "spDoKE24Import", curs, conx)
                     case "zaq":
-                        sp_name = "spDoZAQCODMI9Import"
-                        curs.execute(sp_name)
-                        conx.commit()
-                        ws.send(sp_name + "...done")
+                        run_stored(ws, "spDoZAQCODMI9Import", curs, conx)
+                        run_stored(ws, "spBudForAlignment", curs, conx)
+                        run_stored(ws, "spBudForDetails_FillSales", curs, conx)
                     case "oo":
                         pass
                     case "oh":
@@ -723,7 +716,13 @@ def run_process(ws, conx, curs, files, stored_proc=False):
                         pass
                     case "prl":
                         pass
-       
+
+def run_stored(ws, sp_name, curs, conx):
+    ws.send("Executing " + sp_name)
+    curs.execute(sp_name)
+    conx.commit()
+    ws.send("..." + sp_name + " done")    
+
 def grind_the_file(ws, duty_key, tab_name, connection, cursor, sql_statement, dataframe):
     ws.send("------- PROCESSING THE FILE -----")
     start_time = time.time()
@@ -834,7 +833,8 @@ def read_the_file(ws, duty_key, duty, converters_dict, rename_dict, drop_list, t
         case "ke30":
             df = df.replace(np.nan, '')
             df['Importtimestamp'] = oggi
-            df["YearMonth"] = (df["Year"].astype(str) + df["Period"].astype(str).str.zfill(2)).astype(int)
+            # df["YearMonth"] = (df["Fiscal Year"].astype(str) + df["Period"].astype(str).str.zfill(2)).astype(int)
+            df["YearMonth"] = (df['Fiscal Year'].astype(int) * 100 + df['Period'].astype(int)).astype(str)
             df = df.replace(np.nan, '')
         case "ke24":
             df = df.replace(np.nan, '')
@@ -889,7 +889,7 @@ def read_the_file(ws, duty_key, duty, converters_dict, rename_dict, drop_list, t
     ws.send(duty_key + " dataframe created")
     ws.send("there are " + str(len(df.columns)) + " columns")
     sql_full = SQL_statement_fabricator(tablename, df.columns.to_list())
-    ws.send(sql_full)
+    # ws.send(sql_full)
     return df, sql_full
 
 def truncate_table(ws, conx, curs, tablename, duty_key=""):
