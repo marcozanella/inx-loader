@@ -9,8 +9,7 @@ import time
 # Connects to the db (connection string is passed)
 # Returns True is succesfully connected, and the connection object, and the cursor
 def connect_db(the_socket, conn_string):
-    
-    the_socket.send("Connection String: <br>" + conn_string)
+    # the_socket.send("Connection String: <br>" + conn_string)
     try:
         conx = pyodbc.connect(conn_string)
         the_socket.send("Connection established successfully")
@@ -68,7 +67,7 @@ def run_process(ws, conx, curs, files, stored_proc=False):
             duties["arr"] = file
         if "prl" in file:
             duties["prl"] = file
-    ws.send("duties: " + str(duties))
+    # ws.send("duties: " + str(duties))
     ws.send("Processing, it may take some time ...")
     ws.send("<h1 class='text-center text-uppercase'>don't refresh or leave the page</h1>")
     for duty_key, duty in duties.items():
@@ -822,8 +821,7 @@ def grind_the_file(ws, duty_key, tab_name, connection, cursor, sql_statement, da
 def read_the_file(ws, duty_key, duty, converters_dict, rename_dict, drop_list, tablename):
     oggi = datetime.datetime.now()
     oggi = oggi.strftime("%Y%m%d-%H%M%S") # 20201120-203456
-    ws.send(" ---- read_the_file " + duty_key + " " + duty + " ")
-    ws.send(" ---- we read the file and adjust data types and field names")
+    ws.send("Readinf the file " + duty + "<br>" + "...adjusting data types")
     df = pd.read_excel(duty, thousands='.', decimal=',', dtype=converters_dict, parse_dates=True)
     # ws.send(df.columns.to_list())
     ws.send("Renaming fields ...")
@@ -885,8 +883,7 @@ def read_the_file(ws, duty_key, duty, converters_dict, rename_dict, drop_list, t
         case "prl":
             df.drop(columns=['SOrg', 'Dv', 'CTyp'], axis=1, inplace=True)
             df['ImportDate'] = datetime.datetime.now()
-    ws.send(duty_key + ": " + str(len(df)) + "records ")
-    ws.send(duty_key + " dataframe created")
+    ws.send(duty_key + ": " + str(len(df)) + "records - dataframe created")
     ws.send("there are " + str(len(df.columns)) + " columns")
     sql_full = SQL_statement_fabricator(tablename, df.columns.to_list())
     # ws.send(sql_full)
@@ -900,7 +897,6 @@ def truncate_table(ws, conx, curs, tablename, duty_key=""):
         sqlstatement = "DELETE FROM " + tablename + " WHERE [LineType] = 'OH'"
     else:
         sqlstatement = "TRUNCATE TABLE " + tablename
-    ws.send(sqlstatement)
     curs.execute(sqlstatement)
     conx.commit()
     ws.send("Cleaned table " + tablename)
@@ -920,7 +916,6 @@ def work_on_the_file(ws, duty_key, duty, converters_dict, rename_dict, table_nam
     # Export - if needing to export an excel file for verification - with timestamp
     config = ConfigParser()
     config.read('config.ini')
-    ws.send('There are ' + str(len(df)) + ' in the dataframe')
     if config.get('DEFAULT', 'export_excel_dataframe') == "True":
         df.to_excel("./output_dataframe_" + duty_key + "_" + datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + ".xlsx")
 
