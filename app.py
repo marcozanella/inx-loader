@@ -1,4 +1,4 @@
-from flask import Flask, flash, request, redirect, render_template, render_template_string, url_for, session
+from flask import Flask, flash, request, redirect, render_template, url_for, session
 from flask_sock import Sock
 from werkzeug.utils import secure_filename
 from time import sleep
@@ -6,13 +6,9 @@ import os, glob
 from configparser import ConfigParser
 import inx.functions
 
-from flask_wtf import FlaskForm
-from wtforms import BooleanField, SubmitField, StringField
-
 app = Flask(__name__)
 socket = Sock(app)
 app.secret_key = 'whEtr8uQoB'
-
 
 @socket.route('/echo')
 def echo(websocket):
@@ -214,61 +210,6 @@ def get_config(company):
     config_dict["connection_string"] = connection_string
 
 
-@app.route('/settings2', methods=['GET', 'POST'])
-def settings2():
-    config = ConfigParser()
-    config.read('config.ini')
-
-    myform = Settings2Form()
-
-
-    # if request.method == 'POST':
-    #     config.set('DEFAULT', 'sql_driver_ver', request.form['sql-driver'])
-    #     config.set('DEFAULT', 'max_content_length', request.form['max-cont-len'])
-    #     config.set('DEFAULT', 'allowed_extensions', request.form['allowed-ext'])
-    #     config.set('DEFAULT', 'run_stored_procedures', request.form['run-sp'])
-    #     config.set('DEFAULT', 'one_column_at_a_time', request.form['one-col-time'])
-
-    #     config.set('INXD_SERVER_CONFIG', 'inxd_db_host', request.form['inxd-db-host'])
-    #     config.set('INXD_SERVER_CONFIG', 'inxd_db_name', request.form['inxd-db-name'])
-    #     config.set('INXD_SERVER_CONFIG', 'inxd_db_username', request.form['inxd-db-username'])
-    #     config.set('INXD_SERVER_CONFIG', 'inxd_db_password', request.form['inxd-db-password'])
-    #     config.set('INXD_SERVER_CONFIG', 'inxd_upload_folder', request.form['inxd-upload-folder'])
-
-    #     config.set('INXEU_SERVER_CONFIG', 'inxeu_db_host', request.form['inxeu-db-host'])
-    #     config.set('INXEU_SERVER_CONFIG', 'inxeu_db_name', request.form['inxeu-db-name'])
-    #     config.set('INXEU_SERVER_CONFIG', 'inxeu_db_username', request.form['inxeu-db-username'])
-    #     config.set('INXEU_SERVER_CONFIG', 'inxeu_db_password', request.form['inxeu-db-password'])
-    #     config.set('INXEU_SERVER_CONFIG', 'inxeu_upload_folder', request.form['inxeu-upload-folder'])
-
-
-    #     with open('config.ini', 'w') as configfile:
-    #         config.write(configfile)
-    #     return redirect(url_for('settings'))
-
-    sql_driver_ver = config.get('DEFAULT', 'sql_driver_ver')
-    max_content_length = config.get('DEFAULT', 'max_content_length')
-    allowed_extensions = config.get('DEFAULT', 'allowed_extensions')
-    run_stored_procedures = config.get('DEFAULT', 'run_stored_procedures')
-    one_column_at_a_time = config.get('DEFAULT', 'one_column_at_a_time')
-    inxd_db_host = config.get('INXD_SERVER_CONFIG', 'inxd_db_host')
-    inxd_db_name = config.get('INXD_SERVER_CONFIG', 'inxd_db_name')
-    inxd_db_username = config.get('INXD_SERVER_CONFIG', 'inxd_db_username')
-    inxd_db_password = config.get('INXD_SERVER_CONFIG', 'inxd_db_password')
-    inxd_upload_folder = config.get('INXD_SERVER_CONFIG', 'inxd_upload_folder')
-    inxeu_db_host = config.get('INXEU_SERVER_CONFIG', 'inxeu_db_host')
-    inxeu_db_name = config.get('INXEU_SERVER_CONFIG', 'inxeu_db_name')
-    inxeu_db_username = config.get('INXEU_SERVER_CONFIG', 'inxeu_db_username')
-    inxeu_db_password = config.get('INXEU_SERVER_CONFIG', 'inxeu_db_password')
-    inxeu_upload_folder = config.get('INXEU_SERVER_CONFIG', 'inxeu_upload_folder')
-
-    return render_template('settings2.html', sql_driver=sql_driver_ver, max_cont_length=max_content_length, allow_ext=allowed_extensions, run_sp=run_stored_procedures, one_column_per_time=one_column_at_a_time, inxd_dbhost=inxd_db_host, inxd_dbname=inxd_db_name, inxd_dbusername=inxd_db_username, inxd_dbpassword=inxd_db_password, inxd_uploadfolder=inxd_upload_folder, inxeu_dbhost=inxeu_db_host, inxeu_dbname=inxeu_db_name, inxeu_dbusername=inxeu_db_username, inxeu_dbpassword=inxeu_db_password, inxeu_uploadfolder=inxeu_upload_folder, form = myform)
-
-
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0', port=8000)
 
-class Settings2Form(FlaskForm):
-    sql_driver_version = StringField("SQL driver version")
-    toggle_stored_proc = BooleanField ("Stored Proc", false_values=[""])
-    submit_button = SubmitField("Save")
