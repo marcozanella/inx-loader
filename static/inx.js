@@ -9,7 +9,12 @@ const log = (text) => {
     console.log(text);
   };
 
-const socket = new WebSocket('ws://' + location.host + '/echo');
+const protocol = window.location.protocol.includes('https') ? `wss`:`ws`;
+console.log(`protocol: ${protocol}`);
+
+// const socket = new WebSocket('ws://' + location.host + '/echo');
+const socket = new WebSocket(`${protocol}://${location.host}/echo`);
+
   socket.addEventListener('message', ev => {
     log(ev.data);
   });
