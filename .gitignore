@@ -1,7 +1,7 @@
 .DS_Store
 .pyc
 sample_files/
-sql_pbi_venv
+inx-loader-venv
 .vscode
 __pycache__/
 inx/__pycache__
