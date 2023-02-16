@@ -12,7 +12,7 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y msodbcsql18 unixodbc-dev
 RUN echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
 RUN /bin/bash -c "source ~/.bashrc"
 # optional: for unixODBC development headers
-RUN apt install -y unixodbc unixodbc-dev
+RUN apt-get install -y unixodbc unixodbc-dev
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
