@@ -14,7 +14,8 @@ app.secret_key = 'whEtr8uQoB'
 def echo(websocket):
     # get_config(session["db"])
     # print( "session[\"db\"] ", session["db"])
-    
+    print('We are in the echo route')
+    global config_dict
     # The variable triggered is used to detect if the process
     # of updating data has been launched at least once
     triggered = False
@@ -182,6 +183,7 @@ def process_file(sock, data):
     sock.send("from process_file" + data)
 
 def get_config(company):
+    print('get_config is called', company)
     # Get these setting from settings.ini
     config = ConfigParser()
     config.read('config.ini')
@@ -211,5 +213,5 @@ def get_config(company):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8000)
+    app.run()
 
