@@ -14,8 +14,6 @@ RUN /bin/bash -c "source ~/.bashrc"
 # optional: for unixODBC development headers
 RUN apt install -y unixodbc unixodbc-dev
 
-EXPOSE 5002
-
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
 
@@ -27,6 +25,7 @@ COPY requirements.txt .
 
 # RUN pip install pyodbc --no-binary :all: pyodbc
 RUN apt-get update
+# build-essential is required to insure pyodbc compile
 RUN apt-get install --reinstall build-essential -y
 RUN pip install pyodbc openpyxl
 RUN python -m pip install -r requirements.txt
