@@ -29,7 +29,7 @@ RUN apt-get update
 RUN apt-get install --reinstall build-essential -y
 
 RUN pip install pyodbc openpyxl
-RUN python -m pip install -r requgunicor irements.txt
+RUN python -m pip install -r reqirements.txt
 
 WORKDIR /app
 COPY . /app
