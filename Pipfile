@@ -8,6 +8,7 @@ flask = "*"
 flask-sock = "*"
 pandas = "*"
 pyodbc = "==4.0.34"
+openpyxl = "*"
 
 [dev-packages]
 

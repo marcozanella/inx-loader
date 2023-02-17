@@ -12,13 +12,14 @@ app.secret_key = 'whEtr8uQoB'
 
 @socket.route('/echo')
 def echo(websocket):
-    # get_config(session["db"])
+    get_config(session["db"])
     # print( "session[\"db\"] ", session["db"])
     print('We are in the echo route')
     global config_dict
     # The variable triggered is used to detect if the process
     # of updating data has been launched at least once
     triggered = False
+    print(config_dict['connection_string'])
     while True:
         if triggered == False:
             triggered = True # Set the execution of this function to true
