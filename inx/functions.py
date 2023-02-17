@@ -24,14 +24,14 @@ def connect_db(the_socket, conn_string):
     #     return False
     except pyodbc.OperationalError as err:
         the_socket.send("DB connection could not be established")
-        return False
+        return False, None, None
     except pyodbc.ProgrammingError as ex:
         the_socket.send (ex.args[1])
-        return False
+        return False, None, None
     except Exception as ex:
         the_socket.send("Database connection terminated with unhandled eception")
         the_socket.send(ex)
-        return False
+        return False, None, None
 
 def prep_file():
     files_dict = {
