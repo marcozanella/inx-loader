@@ -18,7 +18,7 @@ def connect_db(the_socket, conn_string):
         # HURRAY!
         conx.autocommit = False
         curs = conx.cursor()
-        return (True, conx, curs)
+        return True, conx, curs
     # except pyodbc.ConnectionError as ex:
     #     the_socket.send("Connection Error")
     #     return False

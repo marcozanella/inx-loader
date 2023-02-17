@@ -19,20 +19,17 @@ def echo(websocket):
     # The variable triggered is used to detect if the process
     # of updating data has been launched at least once
     triggered = False
-    print(config_dict['connection_string'])
-    print(config_dict['connection_string'])
     
     while True:
         if triggered == False:
             triggered = True # Set the execution of this function to true
-            result = inx.functions.connect_db(websocket, config_dict["connection_string"])
+            result, conx, curs = inx.functions.connect_db(websocket, config_dict["connection_string"])
             # The connect_db returns (True, conx, curs)
             # 1st return value: True if connection successful
             # 2nd return value: the connection object to the database
             # 3rd return value: the curson object
-            if result[0] != False:
-                conx = result[1] 
-                curs = result[2]
+            if result != False:
+                websocket.send('Process about to strat')
                 # Here we need to work on the files
                 # Fare un elenco dei file che ci sono nella cartella uploads
                 files = glob.glob(config_dict["upload_folder"] + "/*") # Get files
