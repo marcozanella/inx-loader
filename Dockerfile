@@ -33,6 +33,8 @@ RUN python -m pip install -r requirements.txt
 
 WORKDIR /app
 COPY . /app
+RUN mkdir uploads && cd uploads
+RUN mkdir inxd && mkdir inxeu
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
 # For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
@@ -42,4 +44,4 @@ USER appuser
 EXPOSE 5500
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-CMD ["gunicorn", "-w", "2" , "-b", "0.0.0.0:5500", "--chdir", "/app", "--timeout", "240", "app:app"]
+CMD ["gunicorn", "-w", "2" , "-b", "0.0.0.0:5500", "--timeout", "240", "app:app"]
