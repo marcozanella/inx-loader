@@ -47,6 +47,7 @@ def home():
 
 @app.route('/test')
 def test():
+    print('ciao')
     return render_template("test.html")
 
 @app.route('/inxeu', methods=['POST', 'GET'])
