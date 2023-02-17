@@ -42,4 +42,4 @@ USER appuser
 EXPOSE 5500
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-CMD ["gunicorn", "-w", "2" , "-b", "0.0.0.0:5500", "--chdir", "/app", "app:app"]
+CMD ["gunicorn", "-w", "2" , "-b", "0.0.0.0:5500", "--chdir", "/app", "--timeout", "240", "app:app"]
