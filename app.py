@@ -20,6 +20,7 @@ def echo(websocket):
     # of updating data has been launched at least once
     triggered = False
     print(config_dict['connection_string'])
+    print(config_dict['connection_string'])
     
     while True:
         if triggered == False:
