@@ -38,7 +38,7 @@ def echo(websocket):
                 inx.functions.run_process(websocket, conx, curs, files, config_dict['run_stored_procedures'])
                 websocket.send("Process ended")
             else:
-                websocket("Connection to DB failed")
+                websocket.send("Connection to DB failed")
               
 @app.route("/")
 def home():
@@ -175,10 +175,15 @@ def check_filename_and_saves_on_server(fileobject, location_to_save, filetype):
 
 def clear_folders(folder):
     folder += '/'
-    for path, subdirs, files in os.walk(folder):
-        for name in files:
-            if os.path.isfile(os.path.join(path,name)):
-                os.remove(os.path.join(path,name))
+    list_dir = os.listdir(folder)
+    for item in list_dir:
+        if item.endswith('.xlsx'):
+            os.remove(os.path.join(folder, item))
+            
+    # for path, subdirs, files in os.walk(folder):
+    #     for name in files:
+    #         if os.path.isfile(os.path.join(path,name)):
+    #             os.remove(os.path.join(path,name))
 
 def process_file(sock, data):
     sleep(1)
