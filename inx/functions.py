@@ -48,8 +48,8 @@ def prep_file():
     pass
 
 def run_process(ws, conx, curs, files, stored_proc=False):
-    files_dict = {}
     duties ={}
+    # ws.send("duties dictionary has been emptied<br>" + str(duties))
     for file in files:
         if "ke30" in file:
             duties["ke30"] = file
@@ -67,11 +67,11 @@ def run_process(ws, conx, curs, files, stored_proc=False):
             duties["arr"] = file
         if "prl" in file:
             duties["prl"] = file
-    # ws.send("duties: " + str(duties))
+    ws.send("new duties dict: " + str(duties))
     ws.send("Processing, it may take some time ...")
     ws.send("<h1 class='text-center text-uppercase'>don't refresh or leave the page</h1>")
     for duty_key, duty in duties.items():
-        ws.send("duty_key: " + duty_key + ", duty: " + duty)
+        ws.send(duty_key + "***duty_key: " + duty_key + ", duty: " + duty)
         oggi = datetime.datetime.now()
         oggi = oggi.strftime("%Y%m%d-%H%M%S") # 20201120-203456
         match duty_key:
@@ -723,7 +723,7 @@ def run_stored(ws, sp_name, curs, conx):
     ws.send("..." + sp_name + " done")    
 
 def grind_the_file(ws, duty_key, tab_name, connection, cursor, sql_statement, dataframe):
-    ws.send("------- PROCESSING THE FILE -----")
+    ws.send(duty_key + "***------- PROCESSING THE FILE -----")
     start_time = time.time()
     df_length = len(dataframe)
     if df_length > 19999:
@@ -744,14 +744,14 @@ def grind_the_file(ws, duty_key, tab_name, connection, cursor, sql_statement, da
         iterations = int(df_length / chunk_size) + 1
     else:
         iterations = int(df_length / chunk_size)
-    ws.send("executing " + duty_key + " in " + str(iterations) + " iterations...")
+    ws.send(duty_key + "***executing " + duty_key + " in " + str(iterations) + " iterations...")
 
     # Iterate over chunks
     for iteration in range(iterations):
         lower_limit = iteration * chunk_size
         upper_limit = (iteration * chunk_size) + (chunk_size - 1)
         if upper_limit >= df_length - 1: upper_limit = df_length - 1
-        ws.send("section " + str(iteration) + " - from " + str(lower_limit) + " to " + str(upper_limit) )
+        ws.send(duty_key + "***section " + str(iteration) + " - from " + str(lower_limit) + " to " + str(upper_limit) )
         chunk_df = dataframe.iloc[lower_limit:upper_limit + 1]
         cursor.fast_executemany = True
         start_time = time.time()
@@ -765,7 +765,7 @@ def grind_the_file(ws, duty_key, tab_name, connection, cursor, sql_statement, da
         # giving too long insertion time
         ########################################################################
         if one_column_per_time == "True":
-            ws.send("start one_column_per_time process")
+            ws.send(duty_key + "***start one_column_per_time process")
             # Don't pollute the chunck df
             chunk_df_copy = chunk_df     
             fields_and_time_dict = {}
@@ -793,12 +793,12 @@ def grind_the_file(ws, duty_key, tab_name, connection, cursor, sql_statement, da
                     message = "Error with column: " + col_name + "<br>" + str(err) + "<br>"
                     message += "SQL statement <br>" + sql_statement_per_column + "<br>"
                     message += "values: " + str(chunk_df_copy.values.tolist())
-                    ws.send(message)
+                    ws.send(duty_key + "***" + message)
                 time_at_finish = time.time()
                 time_lapsed = time_at_finish - time_at_start
                 fields_and_time_dict[col_name] = time_lapsed
-                ws.send(str(index) + "/" + str(total) + " " + col_name + "<br>...time lasped: {:0.2f}".format(time_lapsed) + " sec.")
-            ws.send("end of the one_column_per_time process")
+                ws.send(duty_key + "***" + str(index) + "/" + str(total) + " " + col_name + "<br>...time lasped: {:0.2f}".format(time_lapsed) + " sec.")
+            ws.send(duty_key + "***end of the one_column_per_time process")
         ##########################################################################
 
 
@@ -812,8 +812,8 @@ def grind_the_file(ws, duty_key, tab_name, connection, cursor, sql_statement, da
 
         end_time = time.time()
         duration = end_time - start_time
-        ws.send("section " + str(iteration) + " done in " + str(round(duration, 2)) + " sec        @ " + str(round(chunk_size / duration, 2)) + " rec/sec")
-    ws.send ("Finished with table: " + tab_name)
+        ws.send(duty_key + "***section " + str(iteration) + " done in " + str(round(duration, 2)) + " sec        @ " + str(round(chunk_size / duration, 2)) + " rec/sec")
+    ws.send (duty_key + "***Finished with table: " + tab_name)
 
 # read_the_file
 # Reads the Excel file, creates a dataframe, and build the SQL statement
@@ -821,10 +821,10 @@ def grind_the_file(ws, duty_key, tab_name, connection, cursor, sql_statement, da
 def read_the_file(ws, duty_key, duty, converters_dict, rename_dict, drop_list, tablename):
     oggi = datetime.datetime.now()
     oggi = oggi.strftime("%Y%m%d-%H%M%S") # 20201120-203456
-    ws.send("Readinf the file " + duty + "<br>" + "...adjusting data types")
+    ws.send(duty_key + "***Reading file " + duty + "<br>" + "...adjusting data types")
     df = pd.read_excel(duty, thousands='.', decimal=',', dtype=converters_dict, parse_dates=True)
     # ws.send(df.columns.to_list())
-    ws.send("Renaming fields ...")
+    ws.send(duty_key + "***Renaming fields ...")
     df.rename(columns=rename_dict, inplace=True)
     # ws.send(df.columns.to_list())
     match duty_key:
@@ -883,14 +883,14 @@ def read_the_file(ws, duty_key, duty, converters_dict, rename_dict, drop_list, t
         case "prl":
             df.drop(columns=['SOrg', 'Dv', 'CTyp'], axis=1, inplace=True)
             df['ImportDate'] = datetime.datetime.now()
-    ws.send(duty_key + ": " + str(len(df)) + "records - dataframe created")
-    ws.send("there are " + str(len(df.columns)) + " columns")
+    ws.send(duty_key + "***" + duty_key + ": " + str(len(df)) + " records - dataframe created")
+    ws.send(duty_key + "***there are " + str(len(df.columns)) + " columns")
     sql_full = SQL_statement_fabricator(tablename, df.columns.to_list())
     # ws.send(sql_full)
     return df, sql_full
 
 def truncate_table(ws, conx, curs, tablename, duty_key=""):
-    ws.send("Cleaning ...")
+    ws.send(duty_key + "***Cleaning ...")
     if duty_key == "oo":
         sqlstatement = "DELETE FROM " + tablename + " WHERE [LineType] = 'OO'"
     if duty_key == "oh":
@@ -899,7 +899,7 @@ def truncate_table(ws, conx, curs, tablename, duty_key=""):
         sqlstatement = "TRUNCATE TABLE " + tablename
     curs.execute(sqlstatement)
     conx.commit()
-    ws.send("Cleaned table " + tablename)
+    ws.send(duty_key + "***Cleaned table " + tablename)
 
 def SQL_statement_fabricator(table_name, list_of_columns):
     sql_insert = "INSERT INTO " + table_name

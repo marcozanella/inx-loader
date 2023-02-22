@@ -14,7 +14,6 @@ app.secret_key = 'whEtr8uQoB'
 def echo(websocket):
     get_config(session["db"])
     # print( "session[\"db\"] ", session["db"])
-    print('We are in the echo route')
     global config_dict
     # The variable triggered is used to detect if the process
     # of updating data has been launched at least once
@@ -29,7 +28,7 @@ def echo(websocket):
             # 2nd return value: the connection object to the database
             # 3rd return value: the curson object
             if result != False:
-                websocket.send('Process about to strat')
+                websocket.send('Process starting')
                 # Here we need to work on the files
                 # Fare un elenco dei file che ci sono nella cartella uploads
                 files = glob.glob(config_dict["upload_folder"] + "/*") # Get files
@@ -47,7 +46,6 @@ def home():
 
 @app.route('/test')
 def test():
-    print('ciao')
     return render_template("test.html")
 
 @app.route('/inxeu', methods=['POST', 'GET'])
@@ -178,7 +176,8 @@ def clear_folders(folder):
     folder += '/'
     list_dir = os.listdir(folder)
     for item in list_dir:
-        if item.endswith('.xlsx'):
+        extension = os.path.splitext(item)[1][1:]
+        if extension in config_dict["allowed_extensions"]:
             os.remove(os.path.join(folder, item))
             
     # for path, subdirs, files in os.walk(folder):
@@ -218,7 +217,7 @@ def get_config(company):
         config_dict["upload_folder"] = config["INXEU_SERVER_CONFIG"]["inxeu_upload_folder"]
     connection_string = "DRIVER={ODBC Driver " + config_dict["sql_driver_ver"] + " for SQL Server};SERVER=" + config_dict["db_server"] + ";DATABASE=" + config_dict["db_name"] + ";UID=" + config_dict["db_username"] + ";PWD=" + config_dict["db_password"] + ";Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
     config_dict["connection_string"] = connection_string
-
+    config_dict["allowed_extensions"] = config_dict["allowed_extensions"].split(" ")
 
 if __name__ == "__main__":
     app.run()

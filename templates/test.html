@@ -2,8 +2,32 @@
 
 {% block content %}
 
-<div class="card card-body bg-light"> Marco</div>
+    <div class="card mb-1"> <!--Card open -->
+        <div class="card-header p-1"> <!--header open -->
+            <span class="ms-2 badge text-bg-primary">KE30</span>
+        </div><!-- header close -->
+        <div class= "card-body font-monospace font-weight-light small"> <!--card body open -->
+            Marco
+        </div> <!--Card body close -->
+    </div> <!--Card close -->
+    <div class="p-0 card">
+        <div class= "card-body font-monospace font-weight-light small">
+            Marco
+        </div>
+    </div>
+
+    <div class="card mb-1">
+        <div class="card-header p-1">
+            <span class="badge text-bg-primary">KE30</span>
+        </div>
+        <div class= "card-body font-monospace font-weight-light small">
+            Finished with table: KE30_import
+        </div>
+        
+    </div>
+    
 
 
-<script src="{{url_for('static', filename='test.js')}}"></script>
+
+
 {% endblock %}

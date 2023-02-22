@@ -13,9 +13,10 @@
     {% endwith %}
     <div>
         {{ session["db"] }}
-        {% for file in request.files.values() %}
+        <!-- {% for file in request.files.values() %}
         <p>{{ file.filename }}</p>
         {% endfor %}
+        -->
         <!-- <p>{{request.files.values()['form_ke24']}}</p> -->
         <a class="btn btn-primary" href="/" role="button">Back</a>
     </div>
